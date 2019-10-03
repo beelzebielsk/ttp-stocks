@@ -4,6 +4,8 @@
   "description": "Buy and sell your stocks, heah!",
   "main": "index.js",
   "scripts": {
+    "start": "node app.js",
+    "devStart": "nodemon -L app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -29,6 +31,7 @@
     "sqlite3": "^4.1.0"
   },
   "devDependencies": {
+    "nodemon": "^1.19.3",
     "sequelize-cli": "^5.5.1"
   }
 }

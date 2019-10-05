@@ -54,7 +54,7 @@ export function delay(action, ms) {
 
 // TODO: Change this to environment variable for production, and then
 // scrap it.
-const UNIVERSAL_DELAY = process.env.REACT_APP_TEST_DELAY;
+const UNIVERSAL_DELAY = Number(process.env.REACT_APP_TEST_DELAY);
 
 /* TODO: May have to put user identity as an argument to these two.
  */

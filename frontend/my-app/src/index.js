@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import {fetchPortfolio, fetchTransactions} from './fetch-data'
-import API_KEY from './iex-api-key'
+import {IEX_KEY as API_KEY, IEX_URL} from './iex-api'
 
 /* Questions:
  * - Where should user identity be stored? A global variable? Some
@@ -68,22 +68,22 @@ function Stock(props) {
 
 // TODO: Put in the correct precision for money.
 function Currency(props) {
-    return <span>${props.children}</span>
+    return <span>${props.children}</span>;
 }
 
 // TODO: Put in sensible precision for percent.
 function Percent(props) {
-    return <span>%{props.children}</span>
+    return <span>%{props.children}</span>;
 }
 
 async function getQuote(tickerName) {
-    let root = 'https://sandbox.iexapis.com/stable'
+    let root = IEX_URL;
     let queryParams = new URLSearchParams({
             token : API_KEY,
             filter : 'open,latestPrice',
         });
     let url = `${root}/stock/${tickerName}/quote?${queryParams}`;
-    //console.log(`url: ${url}`);
+    console.log(`url: ${url}`);
     return fetch(url, {
         method: 'GET',
         //mode: 'no-cors',

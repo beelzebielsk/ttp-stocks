@@ -14,15 +14,29 @@ default react port is 3000
 How to setup the app for local development
 <https://reactjs.org/tutorial/tutorial.html> app tutorial
 <https://www.alphavantage.co/documentation/> alpha vantage tutorial
+<https://blog.rapidapi.com/google-finance-api-alternatives/> In case IEX sucks for some reason
+<https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events> In case I switch to an API where this is available
+<https://jsdoc.app/about-getting-started.html> For learning JS documentation
+<https://medium.com/@trekinbami/using-environment-variables-in-react-6b0a99d83cf5> For letting react stuff be in environment vars in production
+<https://expressjs.com/en/starter/hello-world.html> Express reading
 
 Planning 
 ========
 
 Done
 - db done along with sample data.
+- Create a mock of the Portfolio component.
 
 - api endpoints need to get made
 - frontend needs to get made
+- Authentication needs to get made
+- Find+read up on stocks api
+- Make api calls to stocks from backend. My API key should NOT be in
+  my frontend. Though I can do as such at the start.
+- Follow [these directions](https://iexcloud.io/docs/api/#attribution)
+  at the end.
+- An decent model for the portfolio page <https://www.bloomberg.com/markets/stocks>
+- Find and use a linter.
 
 I need a backend and a frontend. They want user authentication. The
 backend has to store users that will get registered. And I suppose it
@@ -296,7 +310,7 @@ Portfolio element.
 I created the `id` property on them to try and force a change. There
 are 3 renders again, no state change.
 
-However, when I changed `id ` to the react reserved property `key`, I
+However, when I changed `id` to the react reserved property `key`, I
 got a state change.
 
 Rendering components like portfolio should work like:
@@ -307,6 +321,12 @@ Rendering components like portfolio should work like:
 - Define the `componentDidMount` method, which is sort like `onload`
   for react apps. On the first render, make all the asynchronous calls
   you want, and then call `this.setState` with the resulting data.
+
+### Using Environment Variables in Frontend
+
+<https://create-react-app.dev/docs/adding-custom-environment-variables>
+
+Prefix them with `REACT_APP` and it'll work out.
 
 ### Others
 
@@ -320,6 +340,10 @@ Rendering components like portfolio should work like:
   `DOMContentLoaded` thing going on somewhere?
   I see "has state" during the render
 - How am I going to show more than one component?
+- If I'm ever having HTTP errors with IEX, see here
+  <https://iexcloud.io/docs/api/#errors>
+- CORS: Why are requests blocked when I specify the 'no-cors' mode?
+  Shouldn't it be the opposite?
 
 
 extending  ideas
@@ -445,7 +469,12 @@ accounted for, then I should be able to do things like:
   high prices of the summaries of contained smaller windows (not true
   according to data)
 
-Sequelize =========
+<https://www.thebalance.com/investing-lesson-1-introduction-to-the-stock-market-356170>
+
+This is closer to what I wanted
+
+Sequelize 
+=========
 
 ### foreign keys
 

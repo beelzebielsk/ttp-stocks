@@ -2,11 +2,11 @@
 module.exports = (sequelize, DataTypes) => {
   const OwnedStock = sequelize.define('OwnedStock', {
     companyName : {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     numStocks : {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
     },
   }, {});

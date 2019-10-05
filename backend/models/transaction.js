@@ -2,16 +2,16 @@
 module.exports = (sequelize, DataTypes) => {
   const Transaction = sequelize.define('Transaction', {
     companyName : {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     numStocks : {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
     },
     /* Full price of the whole transaction */
     price : {
-        type: Sequelize.DOUBLE,
+        type: DataTypes.DOUBLE,
         allowNull: false,
     }
   }, {});

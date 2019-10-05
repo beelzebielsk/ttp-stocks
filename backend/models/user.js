@@ -2,21 +2,21 @@
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     firstName: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     lastName: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     email: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
         /* Email belongs to one account, not more */
         unique: true,
     },
     password: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     /* For a toy, this is too much and allows for imprecise amounts,
@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
      * overkill, and a worse choice than some sort of rational number
      * representation. */
     balance: {
-        type: Sequelize.DOUBLE,
+        type: DataTypes.DOUBLE,
         allowNull: false,
         defaultValue: 5000,
     }

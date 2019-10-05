@@ -9,6 +9,7 @@ const db = require('./db')
 app.get('/', (req, res) => {
     res.send('Hello, world!');
 });
+
 db.sequelize.sync({force: false})
     .then(() => {
         app.listen(PORT, () => {

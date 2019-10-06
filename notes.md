@@ -4,12 +4,12 @@ TODO And Sources
 <https://www.nerdwallet.com/blog/investing/how-to-research-stocks/>
 Could give helpful info to show for stocks
 <https://reactjs.org/docs/faq-functions.html> Talks about react and
-speed <http://jankfree.org/> May help with speed
+speed 
+<http://jankfree.org/> May help with speed
 <https://marmelab.com/blog/2017/02/06/react-is-slow-react-is-fast.html>
 May help with speed
 <https://stackoverflow.com/questions/40714583/how-to-specify-a-port-to-run-a-create-react-app-based-project>
 default react port is 3000
-
 <https://reactjs.org/docs/create-a-new-react-app.html#create-react-app>
 How to setup the app for local development
 <https://reactjs.org/tutorial/tutorial.html> app tutorial
@@ -19,6 +19,7 @@ How to setup the app for local development
 <https://jsdoc.app/about-getting-started.html> For learning JS documentation
 <https://medium.com/@trekinbami/using-environment-variables-in-react-6b0a99d83cf5> For letting react stuff be in environment vars in production
 <https://expressjs.com/en/starter/hello-world.html> Express reading
+<https://devcenter.heroku.com/articles/preparing-a-codebase-for-heroku-deployment> For deploying to heroku
 
 Planning 
 ========
@@ -27,9 +28,12 @@ Done
 - db done along with sample data.
 - Create a mock of the Portfolio component.
 
+Up next
+- Authentication needs to get made
+
+Remaining
 - api endpoints need to get made
 - frontend needs to get made
-- Authentication needs to get made
 - Find+read up on stocks api
 - Make api calls to stocks from backend. My API key should NOT be in
   my frontend. Though I can do as such at the start.
@@ -37,6 +41,8 @@ Done
   at the end.
 - An decent model for the portfolio page <https://www.bloomberg.com/markets/stocks>
 - Find and use a linter.
+- Make color changes s use a transition
+- Make sure that secrets and stuff are decent, not just jokes.
 
 I need a backend and a frontend. They want user authentication. The
 backend has to store users that will get registered. And I suppose it
@@ -156,52 +162,12 @@ I think the Quote endpoint is the way to go.
 
 ### Day's Open
 
-Now I actually have to ask about stuff like 'open' from AV. Where is the day's open?
+This looks simple with IEX API. Just use their quote endpoint. The
+price, open, and close prices are all given in the same request.
 
-Here is a response from 10/03 2128:
-
-```
-{
-    "Global Quote": {
-        "01. symbol": "MSFT",
-        "02. open": "134.9500",
-        "03. high": "136.7500",
-        "04. low": "133.2200",
-        "05. price": "136.2800",
-        "06. volume": "21462874",
-        "07. latest trading day": "2019-10-03",
-        "08. previous close": "134.6500",
-        "09. change": "1.6300",
-        "10. change percent": "1.2105%"
-    }
-}
-```
-
-Here is a response from 10/03, much earlier in the day (not sure when):
-
-```
-{
-    "Global Quote": {
-        "01. symbol": "MSFT",
-        "02. open": "134.7800",
-        "03. high": "136.7500",
-        "04. low": "133.2200",
-        "05. price": "136.1865",
-        "06. volume": "9963126",
-        "07. latest trading day": "2019-10-03",
-        "08. previous close": "134.6500",
-        "09. change": "1.5365",
-        "10. change percent": "1.1411%"
-    }
-}
-```
-
-I would figure that the `open` field should be the same for both,
-because they both happened on the same day. Unless the open in the
-later field is the open for the coming day. But I have no idea how to
-know that. I would assume that the open is for the 'latest trading
-day', but that cannot be true because both requests have the same day
-and different open values.
+I am not sure what point in time the open and close refer to. If I ask
+for a stock price in the middle of the day, how can there be a closing
+price, unless it is yesterday's closing price?
 
 ### Mixing the db with express
 
@@ -311,7 +277,7 @@ I created the `id` property on them to try and force a change. There
 are 3 renders again, no state change.
 
 However, when I changed `id` to the react reserved property `key`, I
-got a state change.
+got a state change. **Seems that's a way to force a state change.**
 
 Rendering components like portfolio should work like:
 
@@ -328,17 +294,244 @@ Rendering components like portfolio should work like:
 
 Prefix them with `REACT_APP` and it'll work out.
 
+### Authentication
+
+Perhaps a user generates a private key once per session to have
+public/private key pairs. The server just trusts that if the
+authentication information was correct the first time, then any
+signatures from that person must be correct. I think that signatures
+are something like encryption with a private key which can get
+'undone' by their public key---and only the corresponding public key.
+
+I know that the user sends their credentials to server first. Then
+server responds with token. How should user send their credentials to
+the server? Is there a secure way? And how should server block/allow
+access to restricted areas?
+
+The user's navigation is all client-side. So the client has to detect
+whether they're logged in or not and disallow access. There's nothing
+the server can do bc it is not the gatekeeper to the content they
+wanna access. Server only is gatekeeper for API calls.
+
+Focus on figuring out the exchange. A first approximation can be to make a function called login which takes a username and password, send them plain in a POST request and have the server send a JWT back.
+
+- Login page has a form which takes email and password.
+- POST request is made to a URL which sends back a token. The token is
+  like an ID badge. It says who the person who logged in is. If the
+  email and password (not encrypted) match something in the database,
+  then a token is sent back with payload firstname, lastname, id.
+- Other API paths which should be protected, like getting transactions
+  or balances will somehow guard against not providing a token, or
+  having an invalid token. Right now, just reject requests which do
+  not have a token. Look up HTTP status codes to pick the right kind.
+- For the client-side, do not render the nav bar unless the user is
+  signed-in. Do this once you have a nav bar.
+
+The communication and steps from the example
+
+- A user goes to the login page.
+- They complete from with username and password on their login page
+  and is submitted as POST request to `/auth` endpoint. The auth endpoint corresponds to `authHandler` in the helpers file.
+    - `u` is a standin for a response from a db on people.
+    - If the identity submitted by the client exists in the db, then
+      do what should be done when auth is successful (hand off the
+      request and response to authSuccess). I think what they did here
+      is a lot like `next` in express. Hand this request and response
+      off to something else. Otherwise do what should happen when auth
+      fails.
+- On a successful authorization, a token is generated and stored in
+  some database (I think leveldb), and the token is sent back as text
+  in an `authorization` header. They also send the `restricted`
+  webpage. They didn't follow how JWT says to do it which is to
+  include `bearer` in there somewhere.
+
+- The user can now log out while on the restricted page. This accesses
+  the `/logout` endpoint, which is the `logout` function from helpers.
+  The token here is the base64 encoded string straight from the
+  header. the jsonwebtokens `verify` is used to verify and decode the
+  token. I don't think it will decode an incorrect token. First the
+  token is verified (why? why is it important to verify a logged-out
+  token? So someone can't log someone else out?). 
+    - The token structure is given in `generateToken`. `generateToken`
+      returns a signed token from `jwt.sign`. These are encoded
+      strings with a signature. The payload has { auth : GUID, agent :
+      client-user-agent-from-headers }. For me, I'd be creating a
+      payload with the user's id and first and last name.
+- After verifying the token, they fetch the stored token in their db
+  for the same identity (same GUID), set the `valid` property to false
+  and put it back in their db. They store all tokens in their db that
+  they've ever issued and track whether valid or not.
+
+- The user can also access privileged content. Note, the privileged
+  content is the `restricted` page, which is the thing with the
+  youtube video. You can get to it straight from auth because the page
+  is served up to you, however nothing in the client stores the token,
+  so I can't visit it directly from the `/private` endpoint.
+  <https://github.com/dwyl/learn-json-web-tokens/blob/master/README.md#q-returning-visitor-no-state-preservation-between-sessions>
+  they suggest to just keep the token in local storage, like we did in
+  Hoopla, even though owasp says not to.
+
+For my application, the best and most secure thing would be to use
+public-key cryptography and to create an api call to get the public
+key of the server. When the user is about to visit restricted content,
+then react will check to see if the user has a valid token. If no
+token at all, or token not signed by server, then redirect them to the
+login screen. o/w let them proceed.
+
+I'll hold the token in localStorage, and I'll put userInfo into the
+state of a top-level site component.
+
+For now, they will just both have pre-shared bullshit key, and all
+communication will be done w/o encryption of any kind.
+
+- User goes to a login component.
+- Login comp renders a form for email and pass.
+- Request is made to `/login` route at backend.
+- backend checks to see if email and pass match the only avail email
+  and pass.
+    - If both match, then signs a jwt and sends it back to the user
+      using the authorization+bearer header thing.
+    - Otherwise, it sends nothing back, and just a HTTP response error
+      code. 403 for now, like iex when I don't provide key
+- The client reads the response.
+    - If receive status 200 and jwt in header, then it extracts token,
+      stores it in localStorage, and changes state of login comp to
+      reflect that successful auth took place.
+    - If receive error code (403), then it takes some correct action.
+      For now, empty the inputs and say `no user with this email and
+      password` exists.
+
+### Express middleware stack
+
+First, it seems everything is considered middleware. Middleware is every and any function that accepts a request object, a response object, and a function which will call the next middleware to be called. In that sense, when we write something like
+
+    app.get('/stack/test', (req, res, next) => {
+        res.send("message");
+    });
+
+This is a middleware that will respond to a request to the path
+`/stack/test`, and will finish sending a response. It won't descend to
+any deeper middleware. That simplifies things; I've been writing
+middleware the whole time.
+
+Was confused about 'middleware stack'. It seemed to me that middleware
+gets called in the order it is registered using the `app.METHOD`
+functions or `app.use`. Sounds more like a queue. But there is a stack
+of function calls, which is why it is called a stack. The calls
+proceed from the stack bottom to the stack top and back down again as
+function calls finish. 
+
+Each call to `app.use` or `app.METHOD` places the passed-in callback on a stack of functions to call in response to a request. Earlier calls are placed first, later calls placed later. So think of them as saying:
+
+    requestHandlerStack.push(
+        'get', // corresponds to app.get, this would be diff for app.use
+        '/path/to/handle', // if there is any
+        (req, res, next) => { ... });
+
+I have a feeling there is one stack, and the `next()` function finds the next appropriate handler for the request. A rough approx of the rules:
+
+- Any app.METHOD handler whose mount path matches exactly the
+  request's URL.
+- Any app.use handler whose mounth path is a prefix of the request's
+  URL.
+
+```
+app.use((req, res, next) => {
+    console.log("first: I'm called.");
+    next();
+    console.log("first: I return.");
+});
+
+app.get('/stack/test', (req, res, next) => {
+    console.log("second: I'm called.");
+    next();
+    console.log("second: I return.");
+});
+
+app.use('/stack', (req, res, next) => {
+    console.log("third: I'm called, and handle any request with /stack as prefix.");
+    next();
+    console.log("third: I return.");
+});
+
+app.get('/stack', (req, res, next) => {
+    console.log("3.5: I'm called, and handle exactly GET /stack only.");
+    next();
+    console.log("3.5: I return.");
+});
+
+app.use((req, res, next) => {
+    console.log("fourth: I'm called all the time.");
+    next();
+    console.log("fourth: I return.");
+});
+
+app.get('/stack/test', (req, res, next) => {
+    console.log("fifth: I'm called, and handle exactly GET /stack/test only.");
+    next();
+    console.log("fifth: I return.");
+});
+
+app.get('/stack/test', (req, res, next) => {
+    console.log("sixth: I'm called, and handle exactly GET /stack/test only.");
+    next();
+    console.log("sixth: I return.");
+});  
+```
+
+And corresponding output when I make request `GET /stack/test` (:
+aligned for legibility):
+
+```
+first:  I'm called all the time.
+second: I'm called, and handle exactly GET /stack/test only.
+third:  I'm called, and handle any request with /stack as prefix.
+fourth: I'm called all the time.
+fifth:  I'm called, and handle exactly GET /stack/test only.
+sixth:  I'm called, and handle exactly GET /stack/test only.
+sixth:  I return.
+fifth:  I return.
+fourth: I return.
+third:  I return.
+second: I return.
+first:  I return.
+```
+
+And corresponding output when I make request `GET /stack` (:
+aligned for legibility):
+
+```
+first:  I'm called all the time.
+third:  I'm called, and handle any request with /stack as prefix.
+3.5:    I'm called, and handle exactly GET /stack only.
+fourth: I'm called all the time.
+fourth: I return.
+3.5:    I return.
+third:  I return.
+first:  I return.
+```
+
+Since relative order of each handler is always kept, but only the
+correct handlers are called, I think there's one large stack where
+each entry is stored with some test to see if the request's URL
+matches what that handler should handle. Express routers may bundle
+everything under it up into a single middleware, which would clean up
+that stack considerably.
+
+That would be a bad model if I had one application with a ton of
+different possible URLs it could service. That would mean a linear
+search through this stack for appropriate handlers. I don't think the
+`.use` handlers are stored separately from the `.METHOD` handlers,
+because they're always called in the correct order relative to each
+other. I think that would be overly complicated if they were stored in
+different data structures.
+
 ### Others
 
 - I've forgotten the basics of express.
-- How do I start off the portfolio page? I need asynchronous results
-  to perform the 1st render. Either that, or I need a bs render which
-  does nothing the 1st time around, and then waits for the fetched
-  results to re-render with correct state.
 - What does `ReactDOM` do? How does react make sure that
   `document.getElementById` returns an element? Is there some
   `DOMContentLoaded` thing going on somewhere?
-  I see "has state" during the render
 - How am I going to show more than one component?
 - If I'm ever having HTTP errors with IEX, see here
   <https://iexcloud.io/docs/api/#errors>
@@ -472,6 +665,21 @@ accounted for, then I should be able to do things like:
 <https://www.thebalance.com/investing-lesson-1-introduction-to-the-stock-market-356170>
 
 This is closer to what I wanted
+
+<https://nodejs.org/en/docs/guides/anatomy-of-an-http-transaction/>
+===================================================================
+
+This is overview of how the base nodejs HTTPServer works. This should
+be the base underneath express.
+
+the `app` that is built is the cb that is provided to node's
+`http.createServer`.
+
+    const express = require('express');
+
+This should give me all the exports from `index.js` of express, which
+is the single export from `./lib/express`. So that's basically the
+index of the project.
 
 Sequelize 
 =========

@@ -48,11 +48,25 @@ app.use(bodyParser.json());
 //secret which is stored in the source of each file.
 const secret = 'secret';
 
-app.post('/login', (req, res) => {
+app.post('/login', validateJSONFields(['email', 'password']));
+app.post('/login', async (req, res) => {
     //FIXME: Accept user information through post parameters, and
     //search for user in users database, and return a token through
     //this.
-    const token = jwt.sign({id: 1, firstName: 'Mikey', lastName: 'Mike'}, secret);
+    const {email, password} = req.body;
+
+    const user = await models.User.findOne({
+        where: {email, password}
+    });
+    if (user === null) {
+        res.status(401).send("No user with that name and password exists.");
+        return;
+    }
+    const token = jwt.sign({
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName
+    }, secret);
     res.status(200).send(token);
 });
 

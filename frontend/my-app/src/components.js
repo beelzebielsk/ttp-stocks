@@ -2,11 +2,7 @@ import React from 'react';
 import {fetchPortfolio, fetchTransactions} from './fetch-data';
 import {IEX_KEY as API_KEY, IEX_URL} from './iex-api';
 import jwt from 'jsonwebtoken';
-
-function makeTimer() {
-    let start = Date.now();
-    return () => Date.now() - start;
-}
+import {fetchBackend} from './api';
 
 function actionTimer() {
     let start = Date.now();
@@ -64,8 +60,10 @@ export function Percent(props) {
     return <span>%{props.children}</span>;
 }
 
-/* Are there any props to this? Should anything control what it
- * renders, aside from site state like user identity?
+/**
+ * Render a user's portfolio of stocks.
+ *
+ * @prop {int} userId - The id of the currently logged-in user.
  */
 export class Portfolio extends React.Component {
     constructor(props) {
@@ -217,6 +215,160 @@ export class LoginScreen extends React.Component {
                 onChange={this.handleChange}
                 />
             <button onClick={this.handleSubmit}>Login</button>
+            {failReason}
+            </div>
+        );
+    }
+}
+
+/* These validators will take in some text and return an object
+ * describing whether it is valid, and if it is not valid, why. The
+ * object has fields 'success' and 'reason'. If the entry is valid,
+ * then return { success: true }. If the entry is invalid, then return
+ * {success: false, reason: why-is-invalid}.
+ */
+function validateEmail(email) {
+    if (email === '') {
+        return {success: false, reason: "No email entered!"};
+    }
+    return {success: true};
+}
+
+function validatePassword(password) {
+    if (password === '') {
+        return {success: false, reason: "No password entered!"};
+    }
+    return {success: true};
+}
+
+/** 
+ * A component to render a sign-up form.
+ *
+ * - needs to render a form that takes in email, password, first name
+ *   and last name. 
+ * - needs to validate those inputs
+ * - needs to submit api request to make a new user
+ * - needs to handle response from that request to instruct user what
+ *   to do if request was unsuccessful.
+ * - When finished, should make user go to sign in page.
+ */
+export class SignUpScreen extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            email : "",
+            password : "",
+            firstName : "",
+            lastName : "",
+            failedAttempt : false,
+            failReason: "",
+        };
+
+        this.handleKeyPress = this.handleKeyPress.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleChange(e) {
+        this.setState({
+            [e.currentTarget.name]: e.currentTarget.value
+        });
+    }
+
+    async handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            await this.handleSubmit(e);
+        }
+    }
+
+    async createNewUser({email, password, firstName, lastName}) {
+        console.log('create new user entered');
+        let response = await fetchBackend('/user', {
+            method: 'POST',
+            body: JSON.stringify({email, password, firstName, lastName}),
+            headers: {
+                'Content-Type' : 'application/json',
+            }
+        });
+        //TODO: This piece is shared with login. Is there some way to
+        //extract this general pattern of {success, reason} and api
+        //responses?
+        if (!response.ok) {
+            return { 
+                success: false,
+                reason: await response.text() 
+            };
+        }
+        return {success: true};
+    }
+    
+    // TODO: Give information about how the sign up attempt failed.
+    // - invalid email
+    // - no password given
+    // - no such user/pass combination exists (done)
+    async handleSubmit(e) {
+        console.log("enter handle submit.");
+        let validationSuccess = validateEmail(this.state.email);
+        if (!validationSuccess.success) {
+            this.setState({
+                failedAttempt: true,
+                failReason: validationSuccess.reason,
+            });
+            return;
+        }
+        validationSuccess = validatePassword(this.state.password);
+        if (!validationSuccess.success) {
+            this.setState({
+                failedAttempt: true,
+                failReason: validationSuccess.reason,
+            });
+            return;
+        }
+        console.log("Before create user.");
+        let apiSuccess = await this.createNewUser(this.state);
+        console.log("After create user.");
+        if (!apiSuccess.success) {
+            this.setState({
+                failedAttempt: true,
+                failReason: apiSuccess.reason,
+            });
+        }
+    }
+
+    render() {
+        let failReason = <span></span>;
+        if (this.state.failedAttempt) {
+            failReason = <span id="failMessage">{this.state.failReason}</span>;
+        }
+        if (this.state.authenticated) {
+            return `You are user ${this.state.id}: ${this.state.firstName} ${this.state.lastName}`;
+        }
+        return (
+            <div onKeyPress={this.handleKeyPress} id="signUpForm">
+            <label>Email</label>
+            <input name="email" 
+                type="text" 
+                value={this.state.email}
+                onChange={this.handleChange}/>
+            <label>Password</label>
+            <input name="password" 
+                type="text" 
+                value={this.state.password}
+                onChange={this.handleChange}
+                />
+            <label>First Name</label>
+            <input name="firstName" 
+                type="text" 
+                value={this.state.firstName}
+                onChange={this.handleChange}
+                />
+            <label>Last Name</label>
+            <input name="lastName" 
+                type="text" 
+                value={this.state.lastName}
+                onChange={this.handleChange}
+                />
+            <button onClick={this.handleSubmit}>Sign up</button>
             {failReason}
             </div>
         );

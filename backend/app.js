@@ -145,7 +145,6 @@ app.get('/transaction/:id', async (req, res) => {
     const userId = parseInt(req.params.id);
     const transactions = await models.Transaction.findAll({
         where: {userId},
-        attributes: {include: ['userId']},
     });
     res.json(transactions);
 });
@@ -156,7 +155,6 @@ app.get('/stocks/:id', async (req, res) => {
     const userId = parseInt(req.params.id);
     const transactions = await models.OwnedStock.findAll({
         where: {userId},
-        include: [models.User],
     });
     res.json(transactions);
 });

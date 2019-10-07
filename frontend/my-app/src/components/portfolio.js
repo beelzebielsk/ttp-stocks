@@ -5,6 +5,7 @@ import {Stock} from './stock';
 import {Currency} from './number-display';
 import {fetchPortfolio} from '../fetch-data';
 import {IEX_KEY as API_KEY, IEX_URL} from '../iex-api';
+import {Loading} from './loading';
 
 /**
  * Render a user's portfolio of stocks.
@@ -51,7 +52,7 @@ export class Portfolio extends React.Component {
     render() {
         console.log("Start rendering.");
         if (this.state.stocks === null) {
-            return <div>Loading...</div>;
+            return <Loading />;
         }
         if (this.state.stocks.length === 0) {
             return <div>You have no stocks, you should buy some</div>;

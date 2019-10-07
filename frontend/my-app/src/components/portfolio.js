@@ -37,6 +37,7 @@ export class Portfolio extends React.Component {
         for (let i = 0; i < stocks.length; i++) {
             stocks[i] = {...stocks[i], ...priceInfo[i]};
         }
+        console.log("Next state of stocks:", stocks);
         this.setState({stocks});
     }
 

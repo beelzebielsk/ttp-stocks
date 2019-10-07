@@ -15,7 +15,6 @@ function actionTimer() {
     }
 }
 
-
 async function getQuote(tickerName) {
     let root = IEX_URL;
     let queryParams = new URLSearchParams({
@@ -118,9 +117,14 @@ export class Portfolio extends React.Component {
     }
 }
 
-/* - Make a form which accepts email and password.
- * - Make function to submit request to /login and handle returned
- *   results.
+/** 
+ * A component to render a sign-in form.
+ * Props:
+ * @param {Function} login(email, password) - A function which will
+ * login a user when given correct credentials. Should return an
+ * object with the fields 'success' and 'reason', where 'success' is
+ * true if login was successful, and false otherwise. 'reason' is the
+ * reason that login was unsuccessful.
  */
 export class LoginScreen extends React.Component {
     constructor(props) {
@@ -134,6 +138,7 @@ export class LoginScreen extends React.Component {
 
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleChange(e) {
@@ -150,8 +155,25 @@ export class LoginScreen extends React.Component {
     }
     
     // TODO: Give information about how the login attempt failed.
+    // - invalid email
+    // - no password given
+    // - no such user/pass combination exists (done)
     async handleSubmit(e) {
         console.log("enter handleSubmit.");
+        if (this.state.email === '') {
+            this.setState({
+                failedAttempt: true,
+                failReason: "No email entered!",
+            });
+            return;
+        }
+        if (this.state.password === '') {
+            this.setState({
+                failedAttempt: true,
+                failReason: "No password entered!",
+            });
+            return;
+        }
         const loginResult = await this.props.handleLogin(
             this.state.email, this.state.password);
         if (!loginResult.success) {
@@ -173,7 +195,7 @@ export class LoginScreen extends React.Component {
             return `You are user ${this.state.id}: ${this.state.firstName} ${this.state.lastName}`;
         }
         return (
-            <div onKeyPress={this.handleKeyPress}>
+            <div onKeyPress={this.handleKeyPress} id="loginForm">
             <label>Email</label>
             <input name="email" 
                 type="text" 

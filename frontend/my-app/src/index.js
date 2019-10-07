@@ -2,7 +2,7 @@ import React from 'react';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import './index.css';
-import {LoginScreen, Portfolio, SignUpScreen} from './components'
+import {LoginScreen, Portfolio, SignUpScreen, TransactionsViewer} from './components/index';
 import jwt from 'jsonwebtoken';
 import {fetchBackend} from './api';
 

@@ -9,3 +9,18 @@ const API_URL='http://localhost:8000';
 export async function fetchBackend(url, options) {
     return fetch(`${API_URL}${url}`, options);
 }
+
+/* Handles any extra steps necessary to send JSON to the backend. Any
+ * option in userOptions overrides the defaults in options variable
+ * contained within.
+ */
+export async function sendJSONBackend(url, toSend, userOptions) {
+    let options = {
+        body: JSON.stringify(toSend),
+        headers: {
+            'Content-Type' : 'application/json',
+        }
+    };
+    Object.assign(options, userOptions);
+    return fetchBackend(url, options);
+}

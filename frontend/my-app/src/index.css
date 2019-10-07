@@ -37,4 +37,16 @@ body {
 #loginForm input {
     display: block;
 }
+
+/* }}} **************************************************************/
+/* Sign Up Form: {{{ **************************************************/
+#signUpForm #failMessage {
+    color: red;
+    display: block;
+}
+
+#signUpForm input {
+    display: block;
+}
+
 /* }}} **************************************************************/

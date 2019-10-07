@@ -2,7 +2,7 @@ import React from 'react';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import './index.css';
-import {LoginScreen, Portfolio} from './components'
+import {LoginScreen, Portfolio, SignUpScreen} from './components'
 import jwt from 'jsonwebtoken';
 import {fetchBackend} from './api';
 
@@ -85,13 +85,37 @@ class App extends React.Component {
             return false;
         }
     }
+
+    //TODO: Implement me. I should clear all state related to user
+    //identity, and any entries in local storage. If I ever invalidate
+    //jwt tokens, then I should perform that here, too.
+    logout() {
+    }
     
     // TODO: Set the route correctly for the login. Don't just render
     // the login, route them to that page.
     render() {
         if (!this.state.authenticated) {
             return (
-                <LoginScreen handleLogin={this.login} />
+                
+                <Router>
+                    <div>
+                        <nav id='sitenav'>
+                            <Link to="/">Sign In</Link>
+                            <Link to="/signup">Sign up</Link>
+                        </nav> 
+                    </div>
+
+                    <Switch>
+                        <Route exact path="/">
+                            <LoginScreen handleLogin={this.login} />
+                        </Route>
+                        <Route path="/signup">
+                            <SignUpScreen />
+                        </Route>
+                    </Switch>
+                </Router>
+
             );
         }
         return (
@@ -108,6 +132,7 @@ class App extends React.Component {
                 <Switch>
                     <Route path="/signout">This is sign out</Route>
                     <Route path="/signup">
+                        <SignUpScreen />
                         {"This is where I sign up, where's the form?"}
                     </Route>
                     <Route path="/">

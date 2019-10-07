@@ -14,3 +14,14 @@ body {
     color: gray;
 }
 
+#sitenav a {
+    float: right;
+}
+
+#sitenav a + a {
+    margin-right: 20px;
+}
+
+#site {
+  padding-top: 30px;
+}

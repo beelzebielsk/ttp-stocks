@@ -118,9 +118,6 @@ export class Portfolio extends React.Component {
     }
 }
 
-//FIXME: Fetch a public key from the backend instead.
-const secret = 'secret';
-
 /* - Make a form which accepts email and password.
  * - Make function to submit request to /login and handle returned
  *   results.
@@ -131,70 +128,65 @@ export class LoginScreen extends React.Component {
         this.state = {
             email : "",
             password : "",
-            authenticated : false,
             failedAttempt : false,
-            id : null,
-            firstName: null,
-            lastName: null,
+            failReason: "",
         };
 
         this.handleKeyPress = this.handleKeyPress.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
 
-    handleKeyPress(e) {
-        //console.log(e.currentTarget.value);
+    handleChange(e) {
         this.setState({
             [e.currentTarget.name]: e.currentTarget.value
         });
     }
 
-    async login() {
-        let credentials = new FormData();
-        credentials.append('email', this.state.email);
-        credentials.append('password', this.state.password);
-        //FIXME: Put the URL here into an environment variable.
-        const tokenResponse = await fetch('http://localhost:8000/login', {
-            method: 'POST',
-            body: credentials,
-        });
-        const token = await tokenResponse.text();
-        try {
-            let payload = jwt.verify(token, secret);
-            console.log(payload);
+    async handleKeyPress(e) {
+        console.log(e.key);
+        if (e.key === 'Enter') {
+            await this.handleSubmit(e);
+        }
+    }
+    
+    // TODO: Give information about how the login attempt failed.
+    async handleSubmit(e) {
+        console.log("enter handleSubmit.");
+        const loginResult = await this.props.handleLogin(
+            this.state.email, this.state.password);
+        if (!loginResult.success) {
+            console.log("tried to submit, and failed.");
             this.setState({
-                id: payload.id,
-                firstName: payload.firstName,
-                lastName: payload.lastName,
-                authenticated: true
+                password: "",
+                failedAttempt: true,
+                failReason: loginResult.reason,
             });
-        } catch(err) {
-            this.setState({failedAttempt: true});
-            console.error(err);
         }
     }
 
-    handleSubmit(e) {
-        this.login()
-    }
-
     render() {
+        let failReason = <span></span>;
+        if (this.state.failedAttempt) {
+            failReason = <span id="failMessage">{this.state.failReason}</span>;
+        }
         if (this.state.authenticated) {
             return `You are user ${this.state.id}: ${this.state.firstName} ${this.state.lastName}`;
         }
         return (
-            <div>
+            <div onKeyPress={this.handleKeyPress}>
             <label>Email</label>
             <input name="email" 
                 type="text" 
                 value={this.state.email}
-                onChange={this.handleKeyPress}/>
+                onChange={this.handleChange}/>
             <label>Password</label>
             <input name="password" 
                 type="text" 
                 value={this.state.password}
-                onChange={this.handleKeyPress}/>
+                onChange={this.handleChange}
+                />
             <button onClick={this.handleSubmit}>Login</button>
+            {failReason}
             </div>
         );
     }

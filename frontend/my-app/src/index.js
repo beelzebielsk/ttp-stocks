@@ -1,7 +1,9 @@
 import React from 'react';
+import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import './index.css';
 import {LoginScreen} from './components'
+import jwt from 'jsonwebtoken';
 
 /* Questions:
  * - Where should user identity be stored? A global variable? Some
@@ -32,10 +34,87 @@ import {LoginScreen} from './components'
  */
 
 
+//FIXME: Fetch a public key from the backend instead.
+const secret = 'secret';
+
+class App extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            authenticated : false,
+            id : null,
+            firstName: null,
+            lastName: null,
+        }
+        this.login = this.login.bind(this);
+    }
+
+    async login(email, password) {
+        console.log("enter login.");
+        let credentials = {email, password};
+        //FIXME: Put the URL here into an environment variable.
+        const tokenResponse = await fetch('http://localhost:8000/login', {
+            method: 'POST',
+            body: JSON.stringify(credentials),
+            headers: {
+                'Content-Type' : 'application/json',
+            },
+        });
+        if (!tokenResponse.ok) {
+            return { 
+                success: false,
+                reason: await tokenResponse.text() 
+            };
+        }
+        const token = await tokenResponse.text();
+        console.log(token);
+        try {
+            let payload = jwt.verify(token, secret);
+            this.setState({
+                id: payload.id,
+                firstName: payload.firstName,
+                lastName: payload.lastName,
+                authenticated: true
+            });
+            localStorage.setItem('token', token);
+            return {success: true};
+        } catch(err) {
+            console.error(err);
+            return false;
+        }
+    }
+    
+    // TODO: Set the route correctly for the login. Don't just render
+    // the login, route them to that page.
     render() {
+        if (!this.state.authenticated) {
+            return (
+                <LoginScreen handleLogin={this.login} />
+            );
+        }
         return (
+        <Router>
             <div>
+                <nav id='sitenav'>
+                    <Link to="/">Home</Link>
+                    <Link to="/signout">Sign Out</Link>
+                    <Link to="/signup">Sign up</Link>
+                </nav> 
             </div>
+
+            <div id="site">
+                <Switch>
+                    <Route path="/signout">This is sign out</Route>
+                    <Route path="/signup">
+                        {"This is where I sign up, where's the form?"}
+                    </Route>
+                    <Route path="/">
+                        Hello {this.state.firstName} {this.state.lastName}.
+                        How are you?
+                    </Route>
+                </Switch>
+            </div>
+        </Router>
         );
     }
 }
@@ -43,6 +122,6 @@ import {LoginScreen} from './components'
 // ========================================
 
 ReactDOM.render(
-    <LoginScreen />,
+    <App />,
     document.getElementById('root')
 );

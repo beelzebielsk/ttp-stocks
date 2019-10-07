@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import {LoginScreen} from './components'
 import jwt from 'jsonwebtoken';
+import {fetchBackend} from './api';
 
 /* Questions:
  * - Where should user identity be stored? A global variable? Some
@@ -53,7 +54,7 @@ class App extends React.Component {
         console.log("enter login.");
         let credentials = {email, password};
         //FIXME: Put the URL here into an environment variable.
-        const tokenResponse = await fetch('http://localhost:8000/login', {
+        const tokenResponse = await fetchBackend('/login', {
             method: 'POST',
             body: JSON.stringify(credentials),
             headers: {

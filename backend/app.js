@@ -19,6 +19,10 @@ app.use(allowCors);
 // This will only parse when the request's Content-Type is
 // application/json
 app.use(bodyParser.json());
+app.param('userId', (req, res, next, id) => {
+    req.userId = parseInt(req.params.userId);
+    next();
+});
 
 //FIXME: Currently, both back and frontend have a preshared
 //secret which is stored in the source of each file.
@@ -57,6 +61,19 @@ app.post('/user', async (req, res) => {
         const dbResult = await models.User.create({email, password, firstName, lastName});
         console.log(dbResult);
         res.status(200).end();
+    } catch(err) {
+        console.error("error type:", err.name);
+        if (err.name === 'SequelizeUniqueConstraintError') {
+            res.status(400).send("User with this email already exists");
+        }
+        //TODO: What do I do with response here?
+    }
+});
+
+app.get('/user/:userId', async (req, res) => {
+    try {
+        const dbResult = await models.User.findByPk(req.userId);
+        res.status(200).json(dbResult);
     } catch(err) {
         console.error("error type:", err.name);
         if (err.name === 'SequelizeUniqueConstraintError') {
@@ -114,20 +131,18 @@ app.post('/transaction', async (req, res) => {
 
 //FIXME: This should only be available to the authenticated user with
 //the given id.
-app.get('/transaction/:id', async (req, res) => {
-    const userId = parseInt(req.params.id);
+app.get('/transaction/:userId', async (req, res) => {
     const transactions = await models.Transaction.findAll({
-        where: {userId},
+        where: {userId: req.userId},
     });
     res.json(transactions);
 });
 
 //FIXME: This should only be available to the authenticated user with
 //the given id.
-app.get('/stocks/:id', async (req, res) => {
-    const userId = parseInt(req.params.id);
+app.get('/stocks/:userId', async (req, res) => {
     const transactions = await models.OwnedStock.findAll({
-        where: {userId},
+        where: {userId: req.userId},
     });
     res.json(transactions);
 });

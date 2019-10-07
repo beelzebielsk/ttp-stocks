@@ -70,9 +70,9 @@ async function dummyFetchTransactions() {
 }
 
 export async function fetchPortfolio(userId) {
-    return fetchBackend(`/stocks/${userId}`);
+    return fetchBackend(`/stocks/${userId}`).then(r => r.json());
 }
 
 export async function fetchTransactions(userId) {
-    return fetchBackend(`/transaction/${userId}`);
+    return fetchBackend(`/transaction/${userId}`).then(r => r.json());
 }

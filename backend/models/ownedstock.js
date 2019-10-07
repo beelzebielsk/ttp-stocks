@@ -1,7 +1,7 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const OwnedStock = sequelize.define('OwnedStock', {
-    companyName : {
+    tickerName : {
         type: DataTypes.STRING,
         allowNull: false,
     },

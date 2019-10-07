@@ -27,22 +27,48 @@ Planning
 Done
 - db done along with sample data.
 - Create a mock of the Portfolio component.
+- Very basic authentication draft is finished
+- Find+read up on stocks api
+- api endpoints need to get made
+    - The frontend has to tell backend to create new users when a user
+      signs up.
+    - The frontend has to tell backend to create new transactions,
+      when a user makes a purchase.
+- Authentication needs to get made
+- Make a require json properties middleware to validate json messages
+  to endpoints that require a json formatted request.
 
 Up next
-- Authentication needs to get made
+- frontend needs to get made
+    / routing to different components
+    / sign in needs to be recycled from Login example
+    - there should be a quick-and-easy way to block someone from
+      seeing restricted pages. A way to just say "this is blocked off
+      if you don't satisfy some condition, like valid signed token in
+      localStorage".
+    - sign up component
+    - add purchasing to portfolio component
+    - transactions component
+- Put authentication guards over endpoints in the API. Make sure to
+  put auth header in any request to API endpoint that will eventually
+  require it.
+- Change portfolio to distinguish bw not yet having gotten stocks and
+  having no stocks.
 
 Remaining
-- api endpoints need to get made
-- frontend needs to get made
-- Find+read up on stocks api
-- Make api calls to stocks from backend. My API key should NOT be in
-  my frontend. Though I can do as such at the start.
-- Follow [these directions](https://iexcloud.io/docs/api/#attribution)
-  at the end.
-- An decent model for the portfolio page <https://www.bloomberg.com/markets/stocks>
+- After successful sign-up, user should be routed to login.
+- After successful sign-in, user should be routed to portfolio.
+- A decent model for the portfolio page <https://www.bloomberg.com/markets/stocks>
 - Find and use a linter.
 - Make color changes s use a transition
-- Make sure that secrets and stuff are decent, not just jokes.
+- Change to secrets which are asymmetric and allow backend to share
+  pub key for verifcation.
+- Don't transmit passwords unencrypted.
+- Store passwords better in db
+- Follow [these directions](https://iexcloud.io/docs/api/#attribution)
+  at the end.
+- Make api calls to stocks from backend. My API key should NOT be in
+  my frontend. Though I can do as such at the start.
 
 I need a backend and a frontend. They want user authentication. The
 backend has to store users that will get registered. And I suppose it
@@ -102,26 +128,26 @@ Hard Requirements
 =================
 
 1. Should have a sign in page, where a user can sign in using an
-existing account.
+existing account. (done)
     1. Should not allow a user with no existing account (ie a user
-    that cannot submit a valid email/pass pair) to login.
+    that cannot submit a valid email/pass pair) to login. (done)
 2. SHould have a sign up page, where a user can create a new account
 with which to sign in.
-    1. The initial balance of a user's account should be $5000.
+    1. The initial balance of a user's account should be $5000. (done)
     2. No email should be usable for registration more than once.
 3. Should have a user portfolio page.
     1. Should display the worth of each stock in their portfolio at
     the moment that the page is opened (or some decent defn of
     'current moment').
         1. If the price of the stock is the same as it was at the
-        day's open, display grey.
+        day's open, display grey. (done)
         2. If the price of the stock is *less than* it was at the
-        day's open, display red.
+        day's open, display red. (done)
         3. If the price of the stock is *greater than* as it was at
-        the day's open, display green.
-        4. me: display the change in percent of the stock.
+        the day's open, display green. (done)
+        4. me: display the change in percent of the stock. (done)
     2. Should display the net worth of all of their stocks in their
-    portfolio. Q: How do I calc that?
+    portfolio. (done)
     3. Should allow user to purchase new stocks from a single company
     at a time.
     4. Should display user's balance of cash.
@@ -528,16 +554,18 @@ different data structures.
 
 ### Others
 
-- I've forgotten the basics of express.
 - What does `ReactDOM` do? How does react make sure that
   `document.getElementById` returns an element? Is there some
   `DOMContentLoaded` thing going on somewhere?
-- How am I going to show more than one component?
 - If I'm ever having HTTP errors with IEX, see here
   <https://iexcloud.io/docs/api/#errors>
-- CORS: Why are requests blocked when I specify the 'no-cors' mode?
-  Shouldn't it be the opposite?
-
+- CORS: Why are requests blocked when I specify the 'no-cors' mode
+  with fetch?  Shouldn't it be the opposite?
+- I'm having trouble keeping organized commits. I never feel like I
+  did any particular thing when I work. The whole project feels like
+  shifting sands. That's not good. At the very least, I should commit
+  when I finish working on a particular thing, and write up how it is
+  lacking.
 
 extending  ideas
 ================

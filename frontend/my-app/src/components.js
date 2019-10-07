@@ -87,7 +87,7 @@ export class Portfolio extends React.Component {
 
     async getStockInfo() {
         this.t("Mounted");
-        let stocks = await fetchPortfolio();
+        let stocks = await fetchPortfolio(this.props.userId);
         this.t("Got stocks");
         // TODO: Handle errors in the fetch.
         let priceInfo = await Promise.all(
@@ -101,6 +101,13 @@ export class Portfolio extends React.Component {
         this.setState({stocks});
     }
 
+    getFullStockValue() {
+        return this.state.stocks.reduce(
+            (accum, stock) => {return accum + stock.latestPrice * stock.numStocks},
+            0
+        );
+    }
+
     render() {
         console.log("Start rendering.");
         if (this.state.stocks.length === 0) {
@@ -112,6 +119,8 @@ export class Portfolio extends React.Component {
         return (
             <div>
             {stocks}
+            The full value of your stocks is
+            <Currency>{this.getFullStockValue()}</Currency>
             </div>
         );
     }

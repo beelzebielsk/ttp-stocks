@@ -2,7 +2,7 @@ import React from 'react';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import './index.css';
-import {LoginScreen} from './components'
+import {LoginScreen, Portfolio} from './components'
 import jwt from 'jsonwebtoken';
 import {fetchBackend} from './api';
 
@@ -43,7 +43,7 @@ class App extends React.Component {
         super(props);
         this.state = {
             authenticated : false,
-            id : null,
+            userId : null,
             firstName: null,
             lastName: null,
         }
@@ -71,8 +71,9 @@ class App extends React.Component {
         console.log(token);
         try {
             let payload = jwt.verify(token, secret);
+            console.log('token payload:', payload);
             this.setState({
-                id: payload.id,
+                userId: payload.id,
                 firstName: payload.firstName,
                 lastName: payload.lastName,
                 authenticated: true
@@ -112,6 +113,7 @@ class App extends React.Component {
                     <Route path="/">
                         Hello {this.state.firstName} {this.state.lastName}.
                         How are you?
+                        <Portfolio userId={this.state.userId}/>
                     </Route>
                 </Switch>
             </div>

@@ -70,6 +70,97 @@ app.post('/login', async (req, res) => {
     res.status(200).send(token);
 });
 
+/**
+ * Create a new user. Return status 200 if successful, otherwise
+ * return 400.
+ */
+app.post('/user', validateJSONFields([
+    'email', 'password', 'firstName', 'lastName'
+]));
+app.post('/user', async (req, res) => {
+    const {email, password, firstName, lastName} = req.body;
+    console.log(req.body);
+    try {
+        const dbResult = await models.User.create({email, password, firstName, lastName});
+        console.log(dbResult);
+        res.status(200).end();
+    } catch(err) {
+        console.error("error type:", err.name);
+        if (err.name === 'SequelizeUniqueConstraintError') {
+            res.status(400).send("User with this email already exists");
+        }
+        //TODO: What do I do with response here?
+    }
+});
+
+/**
+ * Create a new transaction. Return status 200 if successful, otherwise
+ * return 400.
+ *
+ * Creates a new transaction and creates or updates the balance for
+ * the same stock under that user's id. 
+ *
+ * FIXME: This should only be available to an authenticated user.
+ */
+app.post('/transaction', validateJSONFields([
+    'tickerName', 'numStocks', 'price', 'userId'
+]));
+app.post('/transaction', async (req, res) => {
+    const {tickerName, numStocks, price, userId} = req.body;
+    console.log('user id:', userId);
+    const transaction = await models.sequelize.transaction();
+    try {
+        // Q: Why did I have to capitalize the first U in userId here to
+        // make this work?
+        const record = {
+            companyName: tickerName, numStocks, price, UserId: userId
+        };
+        //console.log('record to enter:', record);
+        await models.Transaction.create(record, {transaction});
+        const stockBalance = await models.OwnedStock.findOne({
+            where: {companyName: tickerName, userId}
+        });
+        //console.log('stock balance', stockBalance);
+        if (stockBalance === null) {
+            await models.OwnedStock.create({
+                companyName: tickerName, numStocks, userId
+            }, {transaction});
+        } else {
+            await stockBalance.update(
+                {numStocks: stockBalance.numStocks + numStocks},
+                {fields: ['numStocks'], transaction});
+        }
+        await transaction.commit();
+        res.status(200).end();
+    } catch(err) {
+        console.error(err);
+        await transaction.rollback();
+        res.status(400).send(err.stack);
+    }
+});
+
+//FIXME: This should only be available to the authenticated user with
+//the given id.
+app.get('/transaction/:id', async (req, res) => {
+    const userId = parseInt(req.params.id);
+    const transactions = await models.Transaction.findAll({
+        where: {userId},
+        attributes: {include: ['userId']},
+    });
+    res.json(transactions);
+});
+
+//FIXME: This should only be available to the authenticated user with
+//the given id.
+app.get('/stocks/:id', async (req, res) => {
+    const userId = parseInt(req.params.id);
+    const transactions = await models.OwnedStock.findAll({
+        where: {userId},
+        include: [models.User],
+    });
+    res.json(transactions);
+});
+
 models.sequelize.sync({force: false})
     .then(() => {
         app.listen(PORT, () => {

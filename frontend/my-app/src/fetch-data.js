@@ -1,3 +1,6 @@
+'use strict';
+
+import {fetchBackend} from './api';
 // FIXME: Get rid of these and put in proper talking to backend.
 const testPortfolio = [
     {
@@ -58,11 +61,18 @@ const UNIVERSAL_DELAY = Number(process.env.REACT_APP_TEST_DELAY);
 
 /* TODO: May have to put user identity as an argument to these two.
  */
-export async function fetchPortfolio() {
+async function dummyFetchPortfolio() {
     return delay(() => testPortfolio, UNIVERSAL_DELAY);
 }
 
-export async function fetchTransactions() {
+async function dummyFetchTransactions() {
     return delay(() => testTransactions, UNIVERSAL_DELAY);
 }
 
+export async function fetchPortfolio(userId) {
+    return fetchBackend(`/stocks/${userId}`);
+}
+
+export async function fetchTransactions(userId) {
+    return fetchBackend(`/transaction/${userId}`);
+}

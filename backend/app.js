@@ -91,6 +91,7 @@ app.get('/user/:userId', async (req, res) => {
  * the same stock under that user's id. 
  *
  * FIXME: This should only be available to an authenticated user.
+ * FIXME: Reduce a user's balance by the price of the transaction.
  */
 app.post('/transaction', validateJSONFields([
     'tickerName', 'numStocks', 'price', 'userId'
@@ -103,17 +104,19 @@ app.post('/transaction', async (req, res) => {
         // Q: Why did I have to capitalize the first U in userId here to
         // make this work?
         const record = {
-            companyName: tickerName, numStocks, price, UserId: userId
+            tickerName, numStocks, price, UserId: userId
         };
         //console.log('record to enter:', record);
         await models.Transaction.create(record, {transaction});
         const stockBalance = await models.OwnedStock.findOne({
-            where: {companyName: tickerName, userId}
+            where: {tickerName, userId}
         });
         //console.log('stock balance', stockBalance);
         if (stockBalance === null) {
+            // Q: Why did I have to capitalize the first U in userId
+            // here to make this work?
             await models.OwnedStock.create({
-                companyName: tickerName, numStocks, userId
+                tickerName, numStocks, UserId: userId
             }, {transaction});
         } else {
             await stockBalance.update(

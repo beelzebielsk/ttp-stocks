@@ -122,23 +122,23 @@ class App extends React.Component {
         <Router>
             <div>
                 <nav id='sitenav'>
-                    <Link to="/">Home</Link>
+                    <Link to="/">Portfolio</Link>
                     <Link to="/signout">Sign Out</Link>
                     <Link to="/signup">Sign up</Link>
+                    <Link to="/transactions">Transaction Log</Link>
                 </nav> 
             </div>
 
             <div id="site">
                 <Switch>
                     <Route path="/signout">This is sign out</Route>
-                    <Route path="/signup">
-                        <SignUpScreen />
-                        {"This is where I sign up, where's the form?"}
-                    </Route>
-                    <Route path="/">
+                    <Route exact path="/">
                         Hello {this.state.firstName} {this.state.lastName}.
                         How are you?
                         <Portfolio userId={this.state.userId}/>
+                    </Route>
+                    <Route path="/transactions">
+                        <TransactionsViewer userId={this.state.userId}/>
                     </Route>
                 </Switch>
             </div>

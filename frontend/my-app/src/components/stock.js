@@ -20,7 +20,7 @@ export function Stock({tickerName, numStocks, latestPrice, open, ...rest}) {
         );
         percentChangePrice = (
             <Percent>
-                {latestPrice - open / open}
+                {(latestPrice - open) / open}
             </Percent>
         );
     }
@@ -28,8 +28,8 @@ export function Stock({tickerName, numStocks, latestPrice, open, ...rest}) {
         <tr {...rest}>
             <td>{tickerName}</td>
             <td>{numStocks}</td>
-            <td>{totalWorth}</td>
-            <td>{percentChangePrice}</td>
+            <td className={className}>{totalWorth}</td>
+            <td className={className}>{percentChangePrice}</td>
         </tr>
     );
 }

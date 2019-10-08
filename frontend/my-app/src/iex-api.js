@@ -29,5 +29,43 @@ export async function getQuote(tickerName) {
             throw RangeError(`Ticker name '${tickerName}' does not exist.`);
         }
         return response.json();
+    }).then(async jsonResponse => {
+        console.log("original quote result:", jsonResponse);
+        if (jsonResponse.open === null) {
+            const openPrice = await getOpen(tickerName);
+            jsonResponse.open = openPrice;
+        }
+        console.log("after ohlc fetch:", jsonResponse);
+        return jsonResponse;
     });
+}
+
+/**
+ * Gets the open price of a stock using a different API endpoint from
+ * getQuote. An emergency move to try and get some opening prices when
+ * possible.
+ */
+async function getOpen(tickerName) {
+    let root = IEX_URL;
+    let queryParams = new URLSearchParams({
+            token : IEX_KEY,
+            filter : 'open',
+        });
+    let url = `${root}/stock/${tickerName}/ohlc?${queryParams}`;
+    return fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type' : 'application/json',
+        }}).then(response => {
+            if (!response.ok && response.status(404)) {
+                throw RangeError(`Ticker name '${tickerName}' does not exist.`);
+            }
+            return response.json();
+        }).then(response => {
+            console.log('ohlc response:', response);
+            if (response.open === undefined) {
+                return null;
+            }
+            return response.open.price;
+        });
 }

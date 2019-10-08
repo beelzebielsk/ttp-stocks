@@ -58,9 +58,18 @@ a {
     margin: auto;
 }
 
+/* Color is from error boxes here.
+ *<https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment>
+ */
 #loginForm #failMessage {
-    color: red;
+    color: hsl(0, 80%, 50%);
     display: block;
+    width: 100%;
+    border: 1px solid hsl(0, 80%, 90%);
+    padding: .5rem;
+    margin-top: 1rem;
+    box-sizing: border-box;
+    text-align: center;
 }
 
 #loginForm input {

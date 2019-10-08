@@ -4,13 +4,11 @@ import React from 'react';
 import {Stock} from './stock';
 import {Currency} from './number-display';
 import {fetchPortfolio} from '../fetch-data';
-import {IEX_KEY as API_KEY, IEX_URL} from '../iex-api';
+import {getQuote} from '../iex-api';
 import {Loading} from './loading';
 
 /**
  * Render a user's portfolio of stocks.
- *
- * TODO: Make this use getQuote from iex-api.
  *
  * @prop {int} userId - The id of the currently logged-in user.
  */
@@ -34,7 +32,7 @@ export class OwnedStocks extends React.Component {
         // TODO: Handle errors in the fetch.
         let priceInfo = await Promise.all(
             stocks.map(s => {
-                return getQuote(s.tickerName).then(response => response.json());
+                return getQuote(s.tickerName);
             }));
         this.t("Got price info");
         for (let i = 0; i < stocks.length; i++) {
@@ -70,22 +68,6 @@ export class OwnedStocks extends React.Component {
             </div>
         );
     }
-}
-
-async function getQuote(tickerName) {
-    let root = IEX_URL;
-    let queryParams = new URLSearchParams({
-            token : API_KEY,
-            filter : 'open,latestPrice',
-        });
-    let url = `${root}/stock/${tickerName}/quote?${queryParams}`;
-    console.log(`url: ${url}`);
-    return fetch(url, {
-        method: 'GET',
-        headers: {
-            'Content-Type' : 'application/json',
-        },
-    });
 }
 
 function actionTimer() {

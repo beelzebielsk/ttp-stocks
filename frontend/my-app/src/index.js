@@ -37,6 +37,9 @@ import {Form} from './components/form';
  *   portfolio.
  */
 
+function LogoutButton({onClick: clickHandler}) {
+    return <button onClick={clickHandler}>Sign Out</button>;
+}
 
 //FIXME: Fetch a public key from the backend instead.
 const secret = 'secret';
@@ -51,6 +54,7 @@ class App extends React.Component {
             lastName: null,
         }
         this.login = this.login.bind(this);
+        this.logout = this.logout.bind(this);
     }
 
     async login(email, password) {
@@ -93,6 +97,12 @@ class App extends React.Component {
     //identity, and any entries in local storage. If I ever invalidate
     //jwt tokens, then I should perform that here, too.
     logout() {
+        this.setState({
+            authenticated : false,
+            userId : null,
+            firstName: null,
+            lastName: null,
+        });
     }
     
     // TODO: Set the route correctly for the login. Don't just render
@@ -126,8 +136,8 @@ class App extends React.Component {
             <div>
                 <nav id='sitenav'>
                     <Link to="/">Portfolio</Link>
-                    <Link to="/signout">Sign Out</Link>
                     <Link to="/transactions">Transaction Log</Link>
+                    <LogoutButton onClick={this.logout}/>
                 </nav> 
             </div>
 

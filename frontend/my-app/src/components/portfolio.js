@@ -10,6 +10,9 @@ import {Loading} from './loading';
 /**
  * Render a user's portfolio of stocks.
  *
+ * TODO: Make this use getQuote from iex-api.
+ * TODO: Change name to OwnedStocks
+ *
  * @prop {int} userId - The id of the currently logged-in user.
  */
 export class Portfolio extends React.Component {
@@ -80,7 +83,6 @@ async function getQuote(tickerName) {
     console.log(`url: ${url}`);
     return fetch(url, {
         method: 'GET',
-        //mode: 'no-cors',
         headers: {
             'Content-Type' : 'application/json',
         },

@@ -36,9 +36,15 @@ export class TransactionsViewer extends React.Component {
                         />);
         });
         return (
-            <div>
-                {renderedTransactions}
-            </div>
+            <table id="transactions">
+                <thead><tr>
+                    <th>Ticker</th>
+                    <th># Owned</th>
+                    <th>Total Price</th>
+                    <th>Transaction Time</th>
+                </tr></thead>
+            {renderedTransactions}
+            </table>
         );
     }
 }
@@ -54,10 +60,11 @@ export class TransactionsViewer extends React.Component {
  */
 function Transaction(props) {
     return (
-        <div>
-        Purchased {props.numStocks} of {props.tickerName} for {" "}
-        <Currency>{props.price}</Currency>{" "}
-        at {props.transactionTime.toLocaleDateString()}
-        </div>
+        <tr>
+            <td>{props.tickerName}</td>
+            <td>{props.numStocks}</td>
+            <td><Currency>{props.price}</Currency></td>
+            <td>{props.transactionTime.toLocaleDateString()}</td>
+        </tr>
     );
 }

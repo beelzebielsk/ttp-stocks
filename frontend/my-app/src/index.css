@@ -152,7 +152,7 @@ a {
 /* }}} **************************************************************/
 /* Portfolio: {{{****************************************************/
 
-table {
+#portfolio {
     border-collapse: collapse;
     width: 100%;
 }
@@ -169,6 +169,36 @@ table {
 }
 
 #portfolio th:first-of-type, td:first-of-type {
+    text-align: left;
+    padding-left: 0;
+}
+
+tr td:first-of-type {
+    padding-left: 0px;
+    text-transform: uppercase;
+}
+
+
+/* }}} **************************************************************/
+/* Transactions: {{{ ************************************************/
+
+#transactions {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#transactions th {
+    text-align: left;
+    font-weight: bold;
+    font-size: .9rem;
+    text-transform: uppercase;
+}
+
+#transactions td,th {
+    padding-right: 2rem;
+}
+
+#transactions th:first-of-type, td:first-of-type {
     text-align: left;
     padding-left: 0;
 }

@@ -25,7 +25,7 @@ export async function getQuote(tickerName) {
             'Content-Type' : 'application/json',
         },
     }).then(response => {
-        if (!response.ok && response.status(404)) {
+        if (!response.ok && response.status === 404) {
             throw RangeError(`Ticker name '${tickerName}' does not exist.`);
         }
         return response.json();
@@ -57,7 +57,7 @@ async function getOpen(tickerName) {
         headers: {
             'Content-Type' : 'application/json',
         }}).then(response => {
-            if (!response.ok && response.status(404)) {
+            if (!response.ok && response.status === 404) {
                 throw RangeError(`Ticker name '${tickerName}' does not exist.`);
             }
             return response.json();

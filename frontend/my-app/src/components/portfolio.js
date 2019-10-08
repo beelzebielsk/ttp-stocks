@@ -6,6 +6,7 @@ import {Currency} from './number-display';
 import {fetchPortfolio} from '../fetch-data';
 import {getQuote} from '../iex-api';
 import {Loading} from './loading';
+import {fetchBackend} from '../api';
 
 /**
  * Render a user's portfolio of stocks.
@@ -17,12 +18,20 @@ export class OwnedStocks extends React.Component {
         super(props);
         // When stocks is null, no fetch made yet.
         // If stocks is an array, then fetch made.
-        this.state = {stocks : null};
+        this.state = {
+            stocks : null,
+            userBalance : null,
+        };
         this.t = actionTimer();
     }
 
     async componentDidMount() {
-        await this.getStockInfo();
+        const stocks = await this.getStockInfo();
+        const userBalance = await this.getUserBalance(); 
+        this.setState({
+            stocks, userBalance,
+        });
+
     }
 
     async getStockInfo() {
@@ -39,7 +48,17 @@ export class OwnedStocks extends React.Component {
             stocks[i] = {...stocks[i], ...priceInfo[i]};
         }
         console.log("Next state of stocks:", stocks);
-        this.setState({stocks});
+        return stocks;
+        //this.setState({stocks});
+    }
+
+    async getUserBalance() {
+        const response = await fetchBackend(`/user/${this.props.userId}`);
+        if (!response.ok) {
+            throw Error("getUserBalance: fetch failed.");
+        }
+        const {balance} = await response.json();
+        return balance;
     }
 
     getFullStockValue() {
@@ -54,8 +73,14 @@ export class OwnedStocks extends React.Component {
         if (this.state.stocks === null) {
             return <Loading />;
         }
+        const balance = (<Currency>{this.state.userBalance}</Currency>);
         if (this.state.stocks.length === 0) {
-            return <div>You have no stocks, you should buy some</div>;
+            return (
+                <>
+                <div>You have no stocks, you should buy some</div>
+                <div>Your current balance is {balance} </div>
+                </>
+            );
         }
         let stocks = this.state.stocks.map(s => (
             <Stock key={s.id} {...s} />
@@ -73,6 +98,8 @@ export class OwnedStocks extends React.Component {
             </table>
             The full value of your stocks is{" "}
             <Currency>{this.getFullStockValue()}</Currency>
+            <br/>
+            Your account's balance is {balance}
             </>
         );
     }

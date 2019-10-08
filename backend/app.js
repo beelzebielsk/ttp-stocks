@@ -101,8 +101,16 @@ app.post('/transaction', async (req, res) => {
     console.log('user id:', userId);
     const transaction = await models.sequelize.transaction();
     try {
-        // Q: Why did I have to capitalize the first U in userId here to
-        // make this work?
+        // NOTE: Must capitalize UserId attribute to set it normally.
+        // It is not clear why.
+        const user = await models.User.findByPk(userId);
+        if (user.balance < price) {
+            res.status(403).send("Not enough money for transaction.");
+            return;
+        }
+        await user.update(
+            {balance: user.balance - price},
+            {fields: ['balance'], transaction});
         const record = {
             tickerName, numStocks, price, UserId: userId
         };

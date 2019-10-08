@@ -100,6 +100,12 @@ export class StockPurchase extends React.Component {
                 userId: this.props.userId,
                 price,
             });
+            if (!apiSuccess.ok && apiSuccess.status === 403) {
+                throw RangeError("You do not have enough money to make this purchase.");
+            }
+            if (!apiSuccess.ok) {
+                throw RangeError(await apiSuccess.text());
+            }
         } catch (err) {
             if (err.name === "RangeError") {
                 this.setState({

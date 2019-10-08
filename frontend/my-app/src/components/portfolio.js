@@ -11,11 +11,10 @@ import {Loading} from './loading';
  * Render a user's portfolio of stocks.
  *
  * TODO: Make this use getQuote from iex-api.
- * TODO: Change name to OwnedStocks
  *
  * @prop {int} userId - The id of the currently logged-in user.
  */
-export class Portfolio extends React.Component {
+export class OwnedStocks extends React.Component {
     constructor(props) {
         super(props);
         // When stocks is null, no fetch made yet.

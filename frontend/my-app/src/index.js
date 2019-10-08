@@ -2,7 +2,7 @@ import React from 'react';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import './index.css';
-import {LoginScreen, PortfolioScreen, SignUpScreen,
+import {LoginScreen, Portfolio, SignUpScreen,
     TransactionsViewer} from './components/index';
 import jwt from 'jsonwebtoken';
 import {fetchBackend} from './api';
@@ -137,7 +137,7 @@ class App extends React.Component {
                     <Route exact path="/">
                         Hello {this.state.firstName} {this.state.lastName}.
                         How are you?
-                        <PortfolioScreen userId={this.state.userId}/>
+                        <Portfolio userId={this.state.userId}/>
                     </Route>
                     <Route path="/transactions">
                         <TransactionsViewer userId={this.state.userId}/>

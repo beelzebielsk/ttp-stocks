@@ -67,7 +67,7 @@ a {
 /* Color is from error boxes here.
  *<https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment>
  */
-.form #failMessage {
+#failMessage {
     color: hsl(0, 80%, 50%);
     display: block;
     width: 100%;

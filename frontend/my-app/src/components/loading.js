@@ -3,5 +3,5 @@
 import React from 'react';
 
 export function Loading(props) {
-    return (<div>Loading...</div>);
+    return (<div id="loadingSymbol">Loading...</div>);
 }          

@@ -11,6 +11,7 @@ export function Portfolio(props) {
     return (
         <div>
             <OwnedStocks {...props} />
+            <hr/>
             <StockPurchase {...props} />
         </div>
     );

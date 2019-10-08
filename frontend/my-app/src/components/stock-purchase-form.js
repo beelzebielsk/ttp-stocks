@@ -69,7 +69,7 @@ export class StockPurchase extends React.Component {
     // submission is successful. It would be the last line to execute
     // in handleSubmit, running prop.onSubmit if it exists.
     async handleSubmit(e) {
-        console.log("enter handleSubmit.");
+        console.log("enter handleSubmit of stock purchase.");
         let validationSuccess = validateTickerName(this.state.tickerName);
         // while the names of the state the hold the form variables
         // change, the general method of reporting errors does not:
@@ -123,7 +123,10 @@ export class StockPurchase extends React.Component {
             failReason = <span id="failMessage">{this.state.failReason}</span>;
         }
         return (
-            <div onKeyPress={this.handleKeyPress} id="stockPurchaseForm">
+            <div onKeyPress={this.handleKeyPress} 
+                id="stockPurchaseForm"
+                className="form"
+                >
             <label>Ticker Name</label>
             <input name="tickerName" 
                 type="text" 

@@ -24,7 +24,8 @@ How to setup the app for local development
 Planning 
 ========
 
-Done
+### Done
+
 - db done along with sample data.
 - Create a mock of the Portfolio component.
 - Very basic authentication draft is finished
@@ -38,37 +39,62 @@ Done
 - Make a require json properties middleware to validate json messages
   to endpoints that require a json formatted request.
 
-Up next
+### Up next
+
 - frontend needs to get made
     / routing to different components
     / sign in needs to be recycled from Login example
-    - there should be a quick-and-easy way to block someone from
-      seeing restricted pages. A way to just say "this is blocked off
-      if you don't satisfy some condition, like valid signed token in
-      localStorage".
-    - sign up component
+    / sign up component
     - add purchasing to portfolio component
-    - transactions component
+    - add user balance to stock purchasing component
+    / transactions component
+- Unify the three forms.
 - Put authentication guards over endpoints in the API. Make sure to
   put auth header in any request to API endpoint that will eventually
   require it.
+- Make sure someone can only buy whole number amounts of stock.
+- Make sure someone can only buy stocks from a valid ticker.
+- Make sure someone can only buy stocks if they have enough money.
+- Change transaction endpoint in API to alter a user's balance for
+  stocks purchased.
+- there should be a quick-and-easy way to block someone from
+    seeing restricted pages. A way to just say "this is blocked off
+    if you don't satisfy some condition, like valid signed token in
+    localStorage".
 - Change portfolio to distinguish bw not yet having gotten stocks and
   having no stocks.
+- Change transaction creation endpoint to also update user balance iff
+  there's enough money to cover the price.
 
-Remaining
+### Remaining
+
+- Keep the documentation consistent. Use param everywhere, or use prop
+  for all react properties expected.
+- The open price is sometimes null from IEX. When? Why?
+    - <https://iexcloud.io/docs/api/#quote> has some info. says
+      > Refers to the official open price from the SIP. 15 minute
+      > delayed (can be null after 00:00 ET, before 9:45 and weekends)
+    - Is there info which states when it will definitely be avail so I
+      can give user message or warning?
 - After successful sign-up, user should be routed to login.
 - After successful sign-in, user should be routed to portfolio.
 - A decent model for the portfolio page <https://www.bloomberg.com/markets/stocks>
 - Find and use a linter.
-- Make color changes s use a transition
+- Make color changes in portfolio use a transition, if you update the
+  prices on the page over time, or implement refresh button.
 - Change to secrets which are asymmetric and allow backend to share
   pub key for verifcation.
 - Don't transmit passwords unencrypted.
 - Store passwords better in db
 - Follow [these directions](https://iexcloud.io/docs/api/#attribution)
   at the end.
+- write logout logic. 
 - Make api calls to stocks from backend. My API key should NOT be in
   my frontend. Though I can do as such at the start.
+- Maybe good hook uses
+    - Fade in previous value, or take action based on previous value
+      of some prop or something.
+    - The loading, then fetch behavior. That's common.
 
 I need a backend and a frontend. They want user authentication. The
 backend has to store users that will get registered. And I suppose it
@@ -322,24 +348,9 @@ Prefix them with `REACT_APP` and it'll work out.
 
 ### Authentication
 
-Perhaps a user generates a private key once per session to have
-public/private key pairs. The server just trusts that if the
-authentication information was correct the first time, then any
-signatures from that person must be correct. I think that signatures
-are something like encryption with a private key which can get
-'undone' by their public key---and only the corresponding public key.
-
-I know that the user sends their credentials to server first. Then
-server responds with token. How should user send their credentials to
-the server? Is there a secure way? And how should server block/allow
-access to restricted areas?
-
-The user's navigation is all client-side. So the client has to detect
-whether they're logged in or not and disallow access. There's nothing
-the server can do bc it is not the gatekeeper to the content they
-wanna access. Server only is gatekeeper for API calls.
-
-Focus on figuring out the exchange. A first approximation can be to make a function called login which takes a username and password, send them plain in a POST request and have the server send a JWT back.
+Focus on figuring out the exchange. A first approximation can be to
+make a function called login which takes a username and password, send
+them plain in a POST request and have the server send a JWT back.
 
 - Login page has a form which takes email and password.
 - POST request is made to a URL which sends back a token. The token is
@@ -552,6 +563,49 @@ because they're always called in the correct order relative to each
 other. I think that would be overly complicated if they were stored in
 different data structures.
 
+### Version Control Good
+
+I'm having trouble keeping organized commits. I never feel like I
+did any particular thing when I work. The whole project feels like
+shifting sands. That's not good. At the very least, I should commit
+when I finish working on a particular thing, and write up how it is
+lacking.
+
+It's important to keep seprate code separate. Working a lot in the
+same file for a few hours is a sign that you're doing a lot of
+different things all in the same place.
+
+Became easier to commit when I split across diff files.
+
+### Sequelize Associate without create
+
+I wanted to be able to create an instance of a model and associate
+that model with a user. Like making a new transaction and associating
+it with a user.
+
+The basic including the attribute in the create didn't work
+
+    models.Transaction.create({
+        tickerName, numStocks, price, userId
+    });
+
+When I would do this, the userId would magically disappear in the
+query. It was unclear as to why. We're on commit `cdf3d2e` as I write
+this. That creation call would result in
+
+    Executing (8bf4eb6b-70fd-4d26-b6ef-3229567fb3bb): INSERT INTO `Transactions` (`id`,`tickerName` ,`numStocks`,`price`,`createdAt`,`updatedAt`) VALUES (NULL,$1,$2,$3,$4,$5);
+
+The userId is just gone.
+
+I did some searching and found the following:
+
+<https://sequelize.org/master/manual/associations.html#creating-with-associations> Almost what I want, but tells how to create a whole new object with associations. Don't want that. Want to associate to existing object.
+<https://github.com/sequelize/sequelize/issues/5325>
+
+For now, my workaround is to capitalize the first U in userId. I don't
+think this would work universally, it may only work for sqlite because
+names aren't case sensitive in sqlite.
+
 ### Others
 
 - What does `ReactDOM` do? How does react make sure that
@@ -561,11 +615,12 @@ different data structures.
   <https://iexcloud.io/docs/api/#errors>
 - CORS: Why are requests blocked when I specify the 'no-cors' mode
   with fetch?  Shouldn't it be the opposite?
-- I'm having trouble keeping organized commits. I never feel like I
-  did any particular thing when I work. The whole project feels like
-  shifting sands. That's not good. At the very least, I should commit
-  when I finish working on a particular thing, and write up how it is
-  lacking.
+- I think would be better to have all the validators throw range
+  errors, and make the range errors always the reasons for failure.
+  Just put up the error message from the range error. This way, rather
+  than a bunch of logic for each validator, just try running all the
+  validators in a try, and handle failure once in a catch. The
+  validators return the value of correct type (eg numbers get parsed).
 
 extending  ideas
 ================
@@ -708,6 +763,11 @@ the `app` that is built is the cb that is provided to node's
 This should give me all the exports from `index.js` of express, which
 is the single export from `./lib/express`. So that's basically the
 index of the project.
+
+<https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/number>
+========================================================================
+
+When an input has type number, calling value on it still returns a string.
 
 Sequelize 
 =========

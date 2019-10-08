@@ -8,7 +8,7 @@ import {getQuote} from '../iex-api';
 /** 
  * A component to render a sign-in form.
  * Props:
- * @param {int} userId - the id of the logged in user.
+ * @prop {int} userId - the id of the logged in user.
  *
  * - render the form for tickername and amount
  * - write the backend call to commit the transaction
@@ -46,7 +46,7 @@ export class StockPurchase extends React.Component {
 
     async createNewTransaction({userId, price, numStocks, tickerName}) {
         return sendJSONBackend('/transaction',
-            body: JSON.stringify({userId, price, numStocks, tickerName}),
+            {userId, price, numStocks, tickerName},
             { method: 'POST' }
         );
     }

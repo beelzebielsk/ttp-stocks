@@ -2,9 +2,12 @@ import React from 'react';
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import './index.css';
-import {LoginScreen, Portfolio, SignUpScreen, TransactionsViewer} from './components/index';
+import {LoginScreen, PortfolioScreen, SignUpScreen,
+    TransactionsViewer} from './components/index';
 import jwt from 'jsonwebtoken';
 import {fetchBackend} from './api';
+
+import {Form} from './components/form';
 
 /* Questions:
  * - Where should user identity be stored? A global variable? Some
@@ -124,7 +127,6 @@ class App extends React.Component {
                 <nav id='sitenav'>
                     <Link to="/">Portfolio</Link>
                     <Link to="/signout">Sign Out</Link>
-                    <Link to="/signup">Sign up</Link>
                     <Link to="/transactions">Transaction Log</Link>
                 </nav> 
             </div>
@@ -135,7 +137,7 @@ class App extends React.Component {
                     <Route exact path="/">
                         Hello {this.state.firstName} {this.state.lastName}.
                         How are you?
-                        <Portfolio userId={this.state.userId}/>
+                        <PortfolioScreen userId={this.state.userId}/>
                     </Route>
                     <Route path="/transactions">
                         <TransactionsViewer userId={this.state.userId}/>

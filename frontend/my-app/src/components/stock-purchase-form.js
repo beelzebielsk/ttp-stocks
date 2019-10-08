@@ -59,6 +59,10 @@ export class StockPurchase extends React.Component {
     // would make it smaller, easier to read. They're not really the
     // same job, though fields need to be validated before submission
     // happens.
+    // TODO: Separate out the validation from the handling of
+    // submission. Submission logic should just take the form fields,
+    // after they've been validated and converted into correct type
+    // from strings (eg numbers parsed to numbers)
     // TODO: This component will have to notify portfolio that a
     // purchase has been made, so it can refresh the portfolio. One
     // way to do this is to have a prop onSubmit which gets run when
@@ -86,12 +90,13 @@ export class StockPurchase extends React.Component {
             });
             return;
         }
+        const numStocks = Number(this.state.amount);
         try {
             const {latestPrice} = await getQuote(this.state.tickerName);
-            const price = this.state.amount * latestPrice;
+            const price = numStocks * latestPrice;
             const apiSuccess = await this.createNewTransaction({
                 tickerName: this.state.tickerName, 
-                numStocks: this.state.amount,
+                numStocks,
                 userId: this.props.userId,
                 price,
             });

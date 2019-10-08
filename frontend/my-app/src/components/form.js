@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 /* Should this be a parent which holds state, and the specific form
  * appearance goes within it, or should this hold some of the basic
@@ -9,7 +9,40 @@ import React from 'react';
  *}
  */
 
+function createChangeHandler(stateChanger) {
+    return (e) => {
+        stateChanger(e.currentTarget.value);
+    };
+}
 
+export function Form(props) {
+    const [name, setName] = useState('');
+    const [password, setPassword] = useState('');
+    const [age, setAge] = useState('');
+
+    return (
+        <div>
+            <label> name
+                <input name='name'
+                       onChange={createChangeHandler(setName)}
+                       />
+            </label>
+            <label> password
+            <input name='password'
+                   onChange={createChangeHandler(setPassword)}
+                   />
+            </label>
+            <label> age
+            <input name='age'
+                   onChange={createChangeHandler(setAge)}
+                   />
+            </label>
+            <button onClick={() => {console.log(name, password, age);}}>
+                click me
+            </button>
+        </div>
+    );
+}
 
 /* What's common to my two forms so far?
  * - Each form tends to have custom submission logic.

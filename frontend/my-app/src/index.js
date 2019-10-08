@@ -139,8 +139,6 @@ class App extends React.Component {
             <Site>
                 <Route path="/signout">This is sign out</Route>
                 <Route exact path="/">
-                    Hello {this.state.firstName} {this.state.lastName}.
-                    How are you?
                     <Portfolio userId={this.state.userId}/>
                 </Route>
                 <Route path="/transactions">

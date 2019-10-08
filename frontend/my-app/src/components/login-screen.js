@@ -39,10 +39,6 @@ export class LoginScreen extends React.Component {
         }
     }
     
-    // TODO: Give information about how the login attempt failed.
-    // - invalid email
-    // - no password given
-    // - no such user/pass combination exists (done)
     async handleSubmit(e) {
         console.log("enter handleSubmit.");
         if (this.state.email === '') {

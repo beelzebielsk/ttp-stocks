@@ -124,7 +124,7 @@ export class SignUpScreen extends React.Component {
                 onChange={this.handleChange}/>
             <label>Password</label>
             <input name="password" 
-                type="text" 
+                type="password" 
                 value={this.state.password}
                 onChange={this.handleChange}
                 />

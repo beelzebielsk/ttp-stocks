@@ -90,6 +90,7 @@ class App extends React.Component {
     //identity, and any entries in local storage. If I ever invalidate
     //jwt tokens, then I should perform that here, too.
     logout() {
+        localStorage.removeItem('token');
         this.setState({
             authenticated : false,
             userId : null,

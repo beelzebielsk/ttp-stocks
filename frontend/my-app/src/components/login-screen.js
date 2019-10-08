@@ -72,11 +72,8 @@ export class LoginScreen extends React.Component {
         if (this.state.failedAttempt) {
             failReason = <span id="failMessage">{this.state.failReason}</span>;
         }
-        if (this.state.authenticated) {
-            return `You are user ${this.state.id}: ${this.state.firstName} ${this.state.lastName}`;
-        }
         return (
-            <div onKeyPress={this.handleKeyPress} id="loginForm">
+            <div onKeyPress={this.handleKeyPress} id="loginForm" className="form">
             <h1>Sign in</h1>
             <label>Email</label>
             <input name="email" 

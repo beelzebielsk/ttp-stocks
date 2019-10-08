@@ -58,6 +58,51 @@ a {
 }
 
 /* }}} **************************************************************/
+/* All Forms: {{{ **************************************************/
+
+.form {
+    max-width: 15rem;
+    margin: auto;
+}
+/* Color is from error boxes here.
+ *<https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment>
+ */
+.form #failMessage {
+    color: hsl(0, 80%, 50%);
+    display: block;
+    width: 100%;
+    border: 1px solid hsl(0, 80%, 90%);
+    padding: .5rem;
+    margin-top: 1rem;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.form input {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Source:
+ *<https://account.genndi.com/login>
+ */
+.form button {
+    width: 100%;
+    background-color: #1f1f1f;
+    border: none;
+    color: white;
+    padding: 2rem;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+    margin-top: 1rem;
+}
+
+.form label {
+    font-size: .8rem;
+}
+
+/* }}} **************************************************************/
 /* Login Form: {{{ **************************************************/
 #loginForm {
     max-width: 15rem;

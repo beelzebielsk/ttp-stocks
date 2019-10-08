@@ -116,7 +116,8 @@ export class SignUpScreen extends React.Component {
             return `You are user ${this.state.id}: ${this.state.firstName} ${this.state.lastName}`;
         }
         return (
-            <div onKeyPress={this.handleKeyPress} id="signUpForm">
+            <div onKeyPress={this.handleKeyPress} id="signUpForm" className="form">
+            <h1>Sign up</h1>
             <label>Email</label>
             <input name="email" 
                 type="text" 

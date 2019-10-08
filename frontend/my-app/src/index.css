@@ -1,5 +1,6 @@
 html {
-    font: 20px "Fira Sans",sans-serif;
+    /*font: 20px "Fira Sans",sans-serif;*/
+    font: 20px "Source Sans Pro",sans-serif;
 }
 
 * {
@@ -12,8 +13,13 @@ body h1 {
 }
 
 a {
+    text-transform: lowercase;
     font-variant: small-caps;
     text-decoration: none;
+}
+
+#loadingSymbol {
+    margin: auto;
 }
 
 /* Transactions: {{{ ************************************************/
@@ -98,13 +104,34 @@ a {
 
 /* }}} **************************************************************/
 /* Sign Up Form: {{{ **************************************************/
-#signUpForm #failMessage {
-    color: red;
-    display: block;
+/* }}} **************************************************************/
+/* Portfolio: {{{****************************************************/
+
+table {
+    border-collapse: collapse;
+    width: 100%;
 }
 
-#signUpForm input {
-    display: block;
+#portfolio th {
+    text-align: left;
+    font-weight: bold;
+    font-size: .9rem;
+    text-transform: uppercase;
 }
+
+#portfolio td,th {
+    padding-right: 2rem;
+}
+
+#portfolio th:first-of-type, td:first-of-type {
+    text-align: left;
+    padding-left: 0;
+}
+
+tr td:first-of-type {
+    padding-left: 0px;
+    text-transform: uppercase;
+}
+
 
 /* }}} **************************************************************/

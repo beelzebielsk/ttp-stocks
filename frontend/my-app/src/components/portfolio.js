@@ -61,11 +61,19 @@ export class OwnedStocks extends React.Component {
             <Stock key={s.id} {...s} />
         ));
         return (
-            <div>
+            <>
+            <table id="portfolio">
+                <thead><tr>
+                    <th>Ticker</th>
+                    <th># Owned</th>
+                    <th>Total Worth</th>
+                    <th>% Change</th>
+                </tr></thead>
             {stocks}
-            The full value of your stocks is
+            </table>
+            The full value of your stocks is{" "}
             <Currency>{this.getFullStockValue()}</Currency>
-            </div>
+            </>
         );
     }
 }

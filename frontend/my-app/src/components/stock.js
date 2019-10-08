@@ -8,28 +8,29 @@ import {Currency, Percent} from './number-display';
  * not available, then pass in null.
  * @prop {float} latestPrice - The latest price for the stock.
  */
-export function Stock(props) {
-    let totalWorth = props.numStocks * props.latestPrice;
+export function Stock({tickerName, numStocks, latestPrice, open, ...rest}) {
+    let totalWorth = <Currency>{numStocks * latestPrice}</Currency>;
     let className, percentChangePrice;
-    if (props.open === null) {
+    if (open === null) {
         className = '';
         percentChangePrice = 'N/A';
     } else {
-        className = props.latestPrice < props.open ? "under" : (
-            props.latestPrice > props.open ? "over" : "same-price"
+        className = latestPrice < open ? "under" : (
+            latestPrice > open ? "over" : "same-price"
         );
         percentChangePrice = (
             <Percent>
-                {props.latestPrice - props.open / props.open}
+                {latestPrice - open / open}
             </Percent>
         );
     }
     return (
-        <div className={className}>
-            {props.numStocks} shares of {props.tickerName} is worth {" "}
-            <Currency>{totalWorth}</Currency>.{" "}
-
-            Changed by {percentChangePrice}
-        </div>);
+        <tr {...rest}>
+            <td>{tickerName}</td>
+            <td>{numStocks}</td>
+            <td>{totalWorth}</td>
+            <td>{percentChangePrice}</td>
+        </tr>
+    );
 }
 

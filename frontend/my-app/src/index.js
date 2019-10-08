@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
+import {BrowserRouter as Router, Switch, Route, Link, Redirect} from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import './index.css';
 import {LoginScreen, Portfolio, SignUpScreen,
@@ -118,6 +118,9 @@ class App extends React.Component {
                         </Route>
                         <Route path="/signup">
                             <SignUpScreen />
+                        </Route>
+                        <Route path="/">
+                            <Redirect to="/" />
                         </Route>
                     </Site>
                 </Router>

@@ -1,7 +1,7 @@
 'use strict';
 
 import {fetchBackend} from './api';
-// FIXME: Get rid of these and put in proper talking to backend.
+
 const testPortfolio = [
     {
         id: 1,
@@ -55,17 +55,13 @@ export function delay(action, ms) {
     });
 }
 
-// TODO: Change this to environment variable for production, and then
-// scrap it.
 const UNIVERSAL_DELAY = Number(process.env.REACT_APP_TEST_DELAY);
 
-/* TODO: May have to put user identity as an argument to these two.
- */
-async function dummyFetchPortfolio() {
+async function dummyFetchPortfolio(userId) {
     return delay(() => testPortfolio, UNIVERSAL_DELAY);
 }
 
-async function dummyFetchTransactions() {
+async function dummyFetchTransactions(userId) {
     return delay(() => testTransactions, UNIVERSAL_DELAY);
 }
 

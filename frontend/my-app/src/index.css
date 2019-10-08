@@ -1,5 +1,19 @@
-body {
-  font: 14px "Century Gothic", Futura, sans-serif;
+html {
+    font: 20px "Fira Sans",sans-serif;
+}
+
+* {
+    font-size: 1rem;
+}
+
+body h1 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+}
+
+a {
+    font-variant: small-caps;
+    text-decoration: none;
 }
 
 /* Transactions: {{{ ************************************************/
@@ -16,19 +30,34 @@ body {
 }
 /* }}} **************************************************************/
 /* Site: {{{ ********************************************************/
+#sitenav {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
 #sitenav a {
-    float: right;
+    display: inline-block;
+    font-size: 1.3rem;
 }
 
 #sitenav a + a {
-    margin-right: 20px;
+    padding-left: 10px;
+    border-left: 1px solid black;
+    margin-left: 10px;
 }
 
 #site {
-  padding-top: 30px;
+    max-width: 30rem;
+    margin: auto;
 }
+
 /* }}} **************************************************************/
 /* Login Form: {{{ **************************************************/
+#loginForm {
+    max-width: 15rem;
+    margin: auto;
+}
+
 #loginForm #failMessage {
     color: red;
     display: block;
@@ -36,6 +65,26 @@ body {
 
 #loginForm input {
     display: block;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Source:
+ *<https://account.genndi.com/login>
+ */
+#loginForm button {
+    width: 100%;
+    background-color: #1f1f1f;
+    border: none;
+    color: white;
+    padding: 2rem;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+    margin-top: 1rem;
+}
+
+#loginForm label {
+    font-size: .8rem;
 }
 
 /* }}} **************************************************************/

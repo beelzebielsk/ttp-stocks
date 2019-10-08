@@ -9,41 +9,34 @@ import {fetchBackend} from './api';
 
 import {Form} from './components/form';
 
-/* Questions:
- * - Where should user identity be stored? A global variable? Some
- *   sort of site-wide state?
- */
-/* Transactions page:
- * - I'm going to display a list of transactions. Would be nice to
- *   have a component which takes a trans list and renders them.
- *
- * Portfolio page:
- * - I'm going to display a list of stock balances, their current
- *   prices, and do some styling when compared to their opening
- *   prices. I will want to work with all of this data at once, and
- *   when any of this data changes, I should re-render things. So I
- *   should keep the stock data as state, and I should hold it all in
- *   some parent component which uses other components to render that
- *   information.
- * - Stock balances are going to come from the database. I can use the
- *   id of the element as a key, since I'm gonna do some mapping.
- *   Vague security concerns about this. I should get {id,
- *   companyName, amount, updatedAt} from my API for each owned stock,
- *   where amount is the total amt owned by the user. UpdatedAt is in
- *   case I want to display the stocks in the order they were most
- *   recently purchased.
- * - When I first render the portfolio page, I should fetch the user's
- *   portfolio and I should then use a component to display the
- *   portfolio.
+//FIXME: Fetch a public key from the backend instead.
+const secret = 'secret';
+
+/* TODO: 
+ * <https://reacttraining.com/react-router/web/guides/primary-components>
+ * this could be good for nav styling
  */
 
 function LogoutButton({onClick: clickHandler}) {
     return <button onClick={clickHandler}>Sign Out</button>;
 }
 
-//FIXME: Fetch a public key from the backend instead.
-const secret = 'secret';
+function Site({children, ...rest}) {
+    return (
+        <div id='site' {...rest}>
+            <Switch>
+                {children}
+            </Switch>
+        </div>
+    );
+}
 
+/* TODO: 
+ * <https://reacttraining.com/react-router/web/example/auth-workflow>
+ * this could be helpful for redirects and such, but I think having
+ * the two different renders is fine for now. Something to be improved
+ * later. Either that or use this just once wrapping a router.
+ */
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -110,25 +103,23 @@ class App extends React.Component {
     render() {
         if (!this.state.authenticated) {
             return (
-                
                 <Router>
                     <div>
                         <nav id='sitenav'>
-                            <Link to="/">Sign In</Link>
-                            <Link to="/signup">Sign up</Link>
+                            <Link to="/">sign in</Link>
+                            <Link to="/signup">sign up</Link>
                         </nav> 
                     </div>
 
-                    <Switch>
+                    <Site>
                         <Route exact path="/">
                             <LoginScreen handleLogin={this.login} />
                         </Route>
                         <Route path="/signup">
                             <SignUpScreen />
                         </Route>
-                    </Switch>
+                    </Site>
                 </Router>
-
             );
         }
         return (
@@ -141,19 +132,17 @@ class App extends React.Component {
                 </nav> 
             </div>
 
-            <div id="site">
-                <Switch>
-                    <Route path="/signout">This is sign out</Route>
-                    <Route exact path="/">
-                        Hello {this.state.firstName} {this.state.lastName}.
-                        How are you?
-                        <Portfolio userId={this.state.userId}/>
-                    </Route>
-                    <Route path="/transactions">
-                        <TransactionsViewer userId={this.state.userId}/>
-                    </Route>
-                </Switch>
-            </div>
+            <Site>
+                <Route path="/signout">This is sign out</Route>
+                <Route exact path="/">
+                    Hello {this.state.firstName} {this.state.lastName}.
+                    How are you?
+                    <Portfolio userId={this.state.userId}/>
+                </Route>
+                <Route path="/transactions">
+                    <TransactionsViewer userId={this.state.userId}/>
+                </Route>
+            </Site>
         </Router>
         );
     }

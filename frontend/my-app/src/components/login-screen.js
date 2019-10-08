@@ -77,6 +77,7 @@ export class LoginScreen extends React.Component {
         }
         return (
             <div onKeyPress={this.handleKeyPress} id="loginForm">
+            <h1>Sign in</h1>
             <label>Email</label>
             <input name="email" 
                 type="text" 

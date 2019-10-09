@@ -3,6 +3,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const models = require('./models')
 const allowCors = require('./middlewares/cors');
 const validateJSONFields = require('./middlewares/validate-json-fields');
@@ -96,9 +97,13 @@ app.post('/login', async (req, res) => {
     const {email, password} = req.body;
 
     const user = await models.User.findOne({
-        where: {email, password}
+        where: {email}
     });
     if (user === null) {
+        res.status(401).send("No user with that name and password exists.");
+        return;
+    }
+    if (!(await bcrypt.compare(password, user.password))) {
         res.status(401).send("No user with that name and password exists.");
         return;
     }
@@ -119,9 +124,11 @@ app.post('/user', validateJSONFields([
 ]));
 app.post('/user', async (req, res) => {
     const {email, password, firstName, lastName} = req.body;
-    console.log(req.body);
     try {
-        const dbResult = await models.User.create({email, password, firstName, lastName});
+        const hash = await bcrypt.hash(password, 10);
+        const dbResult = await models.User.create({
+            email, password: hash, firstName, lastName
+        });
         console.log(dbResult);
         res.status(200).end();
     } catch(err) {

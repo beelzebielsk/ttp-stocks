@@ -90,6 +90,7 @@ app.param('userId', (req, res, next, id) => {
 //generate a private/public key pair and make api endpoint to get the
 //public key.
 const secret = 'secret';
+const verifyCredentials = verifyJWTToken(secret);
 
 app.post('/login', validateJSONFields(['email', 'password']));
 app.post('/login', async (req, res) => {
@@ -140,7 +141,7 @@ app.post('/user', async (req, res) => {
     }
 });
 
-app.get('/user/:userId', async (req, res) => {
+app.get('/user/:userId', verifyCredentials, async (req, res) => {
     const dbResult = await models.User.findByPk(req.userId);
     if (dbResult === null) {
         res.status(404).end;
@@ -162,7 +163,7 @@ app.get('/user/:userId', async (req, res) => {
 app.post('/transaction', validateJSONFields([
     'tickerName', 'numStocks', 'price', 'userId'
 ]));
-app.post('/transaction', async (req, res) => {
+app.post('/transaction', verifyCredentials, async (req, res) => {
     const {tickerName, numStocks, price, userId} = req.body;
     console.log('user id:', userId);
     const transaction = await models.sequelize.transaction();
@@ -208,7 +209,7 @@ app.post('/transaction', async (req, res) => {
 
 //FIXME: This should only be available to the authenticated user with
 //the given id.
-app.get('/transaction/:userId', async (req, res) => {
+app.get('/transaction/:userId', verifyCredentials, async (req, res) => {
     const transactions = await models.Transaction.findAll({
         where: {userId: req.userId},
     });
@@ -217,7 +218,7 @@ app.get('/transaction/:userId', async (req, res) => {
 
 //FIXME: This should only be available to the authenticated user with
 //the given id.
-app.get('/stocks/:userId', async (req, res) => {
+app.get('/stocks/:userId', verifyCredentials, async (req, res) => {
     const transactions = await models.OwnedStock.findAll({
         where: {userId: req.userId},
     });

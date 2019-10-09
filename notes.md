@@ -61,12 +61,13 @@ Planning
     - Unify the three forms.
     - The form problem reasons don't disappear after a successful
       submission. Formik may be good next step.
+- After successful sign-up, user should be routed to login.
+- Update portfolio with new purchaes that the user makes.
 
 ### REQUIRED
 
 ### Up next
 
-- Update portfolio with new purchaes that the user makes.
 - Put authentication guards over endpoints in the API. Make sure to
   put auth header in any request to API endpoint that will eventually
   require it.
@@ -86,7 +87,6 @@ Planning
 
 - Keep the documentation consistent. Use param everywhere, or use prop
   for all react properties expected.
-- After successful sign-up, user should be routed to login.
 - After successful sign-in, user should be routed to portfolio.
 - Change to secrets which are asymmetric and allow backend to share
   pub key for verifcation.

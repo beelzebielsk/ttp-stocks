@@ -117,7 +117,9 @@ class App extends React.Component {
                             <LoginScreen handleLogin={this.login} />
                         </Route>
                         <Route path="/signup">
-                            <SignUpScreen />
+                            <SignUpScreen 
+                                renderAfter={() => <Redirect to="/"/>}
+                            />
                         </Route>
                         <Route path="/">
                             <Redirect to="/" />

@@ -80,17 +80,8 @@ export class Portfolio extends React.Component {
             return <Loading />;
         }
         const balance = (<Currency>{this.state.userBalance}</Currency>);
-        if (this.state.stocks.length === 0) {
-            return (
-                <>
-                <div>You have no stocks, you should buy some</div>
-                <div>Your current balance is {balance} </div>
-                </>
-            );
-        }
         return (<>
-            <OwnedStocks stocks={this.state.stocks}></OwnedStocks>
-            <br/>
+            <OwnedStocks stocks={this.state.stocks} />
             Your account's balance is {balance}
             <hr/>
             <StockPurchase userId={this.props.userId}

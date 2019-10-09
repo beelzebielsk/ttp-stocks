@@ -10,6 +10,12 @@ import {Currency} from './number-display';
  * @prop {int} userId - The id of the currently logged-in user.
  */
 export function OwnedStocks({stocks}) {
+    if (stocks.length === 0) {
+        console.log("No stocks.");
+        return (
+            <div>You have no stocks, you should buy some</div>
+        );
+    }
     let renderedStocks = stocks.map(s => (
         <Stock key={s.id} {...s} />
     ));
@@ -37,5 +43,3 @@ function getFullStockValue(stocks) {
         0
     );
 }
-
-

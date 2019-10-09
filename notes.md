@@ -64,6 +64,8 @@ Planning
 - Update portfolio with new purchaes that the user makes.
     - It's cheap. Complete update every time.
 - Store passwords better in db
+- After successful sign-up, user should be routed to login.
+- Update portfolio with new purchaes that the user makes.
 
 ### Up next
 
@@ -89,7 +91,6 @@ Planning
 
 - Keep the documentation consistent. Use param everywhere, or use prop
   for all react properties expected.
-- After successful sign-up, user should be routed to login.
 - After successful sign-in, user should be routed to portfolio.
 - Change to secrets which are asymmetric and allow backend to share
   pub key for verifcation.

@@ -1,6 +1,26 @@
 import React from 'react';
 import {fetchBackend} from '../api';
 import {validateEmail, validatePassword} from './form-validators';
+import {Formik, Field, ErrorMessage, Form} from 'formik';
+import {FailMessage} from './fail-message';
+
+
+function toFormikValidator(validator) {
+    return (...args) => validator(...args).reason;
+}
+
+const fvalidateEmail = toFormikValidator(validateEmail);
+const fvalidatePassword = toFormikValidator(validatePassword);
+function notEmpty(string) { 
+    if (string === '') {
+        return "Cannot be empty.";
+    }
+    return undefined;
+}
+
+function FailWrapper(props) {
+    return <ErrorMessage {...props} component={FailMessage}/>;
+}
 
 /** 
  * A component to render a sign-up form.
@@ -24,126 +44,65 @@ import {validateEmail, validatePassword} from './form-validators';
  * - sign in
  * - purchase stock
  */
-export class SignUpScreen extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            email : "",
-            password : "",
-            firstName : "",
-            lastName : "",
-            failedAttempt : false,
-            failReason: "",
+export function SignUpScreen() {
+    return (
+        <Formik 
+            initialValues={{
+                email: "",
+                password: "",
+                firstName: "",
+                lastName: ""
+            }}
+            onSubmit={async (values, actions) => {
+                console.log("enter handle submit.");
+                let apiSuccess = await createNewUser(values);
+                if (!apiSuccess.success) {
+                    actions.setStatus(apiSuccess.reason);
+                }
+                actions.setSubmitting(false);
+            }}
+            render={({values, errors, status}) => (
+                <div className='form'>
+                    <h1> Sign Up </h1>
+                    <Form>
+                        <label>email</label>
+                        <Field name="email" type="text" validate={fvalidateEmail} />
+                        <FailWrapper name="email"/>
+                        <label>Password</label>
+                        <Field name="password" type="password" validate={fvalidatePassword} />
+                        <FailWrapper name="password"/>
+                        <label>First Name</label>
+                        <Field name="firstName" type="text" validate={notEmpty} />
+                        <FailWrapper name="firstName"/>
+                        <label>Last Name</label>
+                        <Field name="lastName" type="text" validate={notEmpty} />
+                        <FailWrapper name="lastName"/>
+                        <button type="submit">Sign Up</button>
+                        {status && <FailMessage>{status}</FailMessage>}
+                    </Form>
+                </div>
+            )}
+        />
+    );
+}
+
+async function createNewUser({email, password, firstName, lastName}) {
+    console.log('create new user entered');
+    let response = await fetchBackend('/user', {
+        method: 'POST',
+        body: JSON.stringify({email, password, firstName, lastName}),
+        headers: {
+            'Content-Type' : 'application/json',
+        }
+    });
+    //TODO: This piece is shared with login. Is there some way to
+    //extract this general pattern of {success, reason} and api
+    //responses?
+    if (!response.ok) {
+        return { 
+            success: false,
+            reason: await response.text() 
         };
-
-        this.handleKeyPress = this.handleKeyPress.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
-
-    handleChange(e) {
-        this.setState({
-            [e.currentTarget.name]: e.currentTarget.value
-        });
-    }
-
-    async handleKeyPress(e) {
-        if (e.key === 'Enter') {
-            await this.handleSubmit(e);
-        }
-    }
-
-    async createNewUser({email, password, firstName, lastName}) {
-        console.log('create new user entered');
-        let response = await fetchBackend('/user', {
-            method: 'POST',
-            body: JSON.stringify({email, password, firstName, lastName}),
-            headers: {
-                'Content-Type' : 'application/json',
-            }
-        });
-        //TODO: This piece is shared with login. Is there some way to
-        //extract this general pattern of {success, reason} and api
-        //responses?
-        if (!response.ok) {
-            return { 
-                success: false,
-                reason: await response.text() 
-            };
-        }
-        return {success: true};
-    }
-    
-    // TODO: Give information about how the sign up attempt failed.
-    // - invalid email
-    // - no password given
-    // - no such user/pass combination exists (done)
-    async handleSubmit(e) {
-        console.log("enter handle submit.");
-        let validationSuccess = validateEmail(this.state.email);
-        if (!validationSuccess.success) {
-            this.setState({
-                failedAttempt: true,
-                failReason: validationSuccess.reason,
-            });
-            return;
-        }
-        validationSuccess = validatePassword(this.state.password);
-        if (!validationSuccess.success) {
-            this.setState({
-                failedAttempt: true,
-                failReason: validationSuccess.reason,
-            });
-            return;
-        }
-        console.log("Before create user.");
-        let apiSuccess = await this.createNewUser(this.state);
-        console.log("After create user.");
-        if (!apiSuccess.success) {
-            this.setState({
-                failedAttempt: true,
-                failReason: apiSuccess.reason,
-            });
-        }
-    }
-
-    render() {
-        let failReason = <span></span>;
-        if (this.state.failedAttempt) {
-            failReason = <span id="failMessage">{this.state.failReason}</span>;
-        }
-        if (this.state.authenticated) {
-            return `You are user ${this.state.id}: ${this.state.firstName} ${this.state.lastName}`;
-        }
-        return (
-            <div onKeyPress={this.handleKeyPress} id="signUpForm" className="form">
-            <h1>Sign up</h1>
-            <label>Email</label>
-            <input name="email" 
-                type="text" 
-                value={this.state.email}
-                onChange={this.handleChange}/>
-            <label>Password</label>
-            <input name="password" 
-                type="password" 
-                value={this.state.password}
-                onChange={this.handleChange}
-                />
-            <label>First Name</label>
-            <input name="firstName" 
-                type="text" 
-                value={this.state.firstName}
-                onChange={this.handleChange}
-                />
-            <label>Last Name</label>
-            <input name="lastName" 
-                type="text" 
-                value={this.state.lastName}
-                onChange={this.handleChange}
-                />
-            <button onClick={this.handleSubmit}>Sign up</button>
-            {failReason}
-            </div>
-        );
-    }
+    return {success: true};
 }

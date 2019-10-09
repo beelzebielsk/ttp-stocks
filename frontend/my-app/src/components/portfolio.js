@@ -94,7 +94,9 @@ export class OwnedStocks extends React.Component {
                     <th>Total Worth</th>
                     <th>% Change</th>
                 </tr></thead>
-            {stocks}
+                <tbody>
+                    {stocks}
+                </tbody>
             </table>
             The full value of your stocks is{" "}
             <Currency>{this.getFullStockValue()}</Currency>

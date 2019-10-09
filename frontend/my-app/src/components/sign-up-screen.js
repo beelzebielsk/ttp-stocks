@@ -30,8 +30,9 @@ export function SignUpScreen({renderAfter}) {
                 let apiSuccess = await createNewUser(values);
                 if (!apiSuccess.success) {
                     actions.setStatus(apiSuccess.reason);
+                } else {
+                    setSubmissionStatus(true);
                 }
-                setSubmissionStatus(true);
                 actions.setSubmitting(false);
             }}
             render={({values, errors, status}) => (

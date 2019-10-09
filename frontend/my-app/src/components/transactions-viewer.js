@@ -26,7 +26,10 @@ export class TransactionsViewer extends React.Component {
             return <Loading />;
         }
         if (this.state.transactions.length === 0) {
-            return <div>You've never made a transations, you should make one.</div>;
+            return (
+                <div>You've never made a transaction. Go to the
+                    portfolio page so you can make a purchase.</div>
+            );
         }
         let renderedTransactions = this.state.transactions.map(t => {
             return (<Transaction 

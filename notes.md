@@ -66,32 +66,27 @@ Planning
 - Store passwords better in db
 - After successful sign-up, user should be routed to login.
 - Update portfolio with new purchaes that the user makes.
+- Put authentication guards over endpoints in the API. Make sure to
+  put auth header in any request to API endpoint that will eventually
+  require it.
+    - One middleware should check for authentication: the presence of
+      an authentication header and a jwt token, verify the token, and
+      put the token on the request as req.credentials
+- After successful sign-in, user should be routed to portfolio.
+    - real cheap, they have the same url.
 
 ### Up next
 
 - Don't transmit passwords unencrypted (change to https in back and
   frontend).
     - Just use HTTPS for now.
-- Put authentication guards over endpoints in the API. Make sure to
-  put auth header in any request to API endpoint that will eventually
-  require it.
-    - Put everything that should be guarded to a specific user on one
-      router and give that router a middleware that implements this.
-    - One middleware should check for authentication: the presence of
-      an authentication header and a jwt token, verify the token, and
-      put the token on the request as req.credentials
-    - Another middleware should check that the id claim matches the id
-      of the user being work done on.
-- there should be a quick-and-easy way to block someone from
-    seeing restricted pages. A way to just say "this is blocked off
-    if you don't satisfy some condition, like valid signed token in
-    localStorage".
+- Another middleware should check that the id claim matches the id of
+  the user being work done on.
 
 ### Remaining
 
 - Keep the documentation consistent. Use param everywhere, or use prop
   for all react properties expected.
-- After successful sign-in, user should be routed to portfolio.
 - Change to secrets which are asymmetric and allow backend to share
   pub key for verifcation.
 - Maybe good hook uses
@@ -116,7 +111,6 @@ Planning
   my frontend. Though I can do as such at the start.
 - Password confirmation
     - make sure dont show chars
-
 
 I need a backend and a frontend. They want user authentication. The
 backend has to store users that will get registered. And I suppose it
@@ -199,9 +193,9 @@ with which to sign in. (done)
     portfolio. (done)
     3. Should allow user to purchase new stocks from a single company
     at a time. (done)
-    4. Should display user's balance of cash.
+    4. Should display user's balance of cash. (done)
     5. Should allow a user to purchase a stock from a company at the
-    stock's current price.
+    stock's current price. (done)
         1. Can only buy from a valid ticker. (done)
         2. Can only buy if they have enough cash. (done)
         3. Can only buy whole number quantities of shares (done)

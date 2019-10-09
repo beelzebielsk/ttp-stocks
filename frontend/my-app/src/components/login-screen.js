@@ -22,19 +22,6 @@ export function LoginScreen({handleLogin}) {
             <h1>Sign in</h1>
             <Formik
                 initialValues={{ email: "", password: ""}}
-                validate={({email, password}) => {
-                    let errors = {};
-                    let v = validateEmail(email);
-                    if (!v.success) {
-                        errors.email = v.reason;
-                    }
-                    v = validatePassword(password);
-                    if (!v.success) {
-                        errors.password = v.reason;
-                    }
-                    console.log('validation errors:', errors);
-                    return errors;
-                }}
                 onSubmit={async (values, actions) => {
                     const loginResult = await handleLogin(
                         values.email, values.password);
@@ -51,13 +38,17 @@ export function LoginScreen({handleLogin}) {
                     handleSubmit, handleBlur}) => (
                     <Form>
                         <label>Email</label>
-                        <Field type="text" name="email" placeholder="user@example.com"/>
+                        <Field type="text" name="email" placeholder="user@example.com"
+                            validate={validateEmail}
+                        />
                         <ErrorMessage name="email" component={FailMessage} />
                         <label>Password</label>
-                        <Field type="password" name="password" />
+                        <Field type="password" name="password" 
+                            validate={validatePassword}
+                        />
                         <ErrorMessage name="password" component={FailMessage} />
-                        {status && <FailMessage>{status}</FailMessage>}
                         <button type="submit">Submit</button>
+                        {status && <FailMessage>{status}</FailMessage>}
                     </Form>
                 )}
                 />

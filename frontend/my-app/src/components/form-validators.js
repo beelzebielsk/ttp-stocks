@@ -8,16 +8,20 @@
  */
 export function validateEmail(email) {
     if (email === '') {
-        return {success: false, reason: "Email field is empty"};
+        return "Email field is empty";
     }
-    return {success: true};
 }
 
 export function validatePassword(password) {
     if (password === '') {
-        return {success: false, reason: "Password field is empty"};
+         return "Password field is empty";
     }
-    return {success: true};
+}
+
+export function fieldNotEmpty(strValue) {
+    if (strValue === '') {
+         return "Cannot be empty";
+    }
 }
 
 export function validateTickerName(tickerName) {

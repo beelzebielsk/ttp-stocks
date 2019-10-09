@@ -1,21 +1,11 @@
 import React from 'react';
 import {fetchBackend} from '../api';
-import {validateEmail, validatePassword} from './form-validators';
+import {validateEmail, validatePassword, fieldNotEmpty as notEmpty} from './form-validators';
 import {Formik, Field, ErrorMessage, Form} from 'formik';
 import {FailMessage} from './fail-message';
 
-
 function toFormikValidator(validator) {
     return (...args) => validator(...args).reason;
-}
-
-const fvalidateEmail = toFormikValidator(validateEmail);
-const fvalidatePassword = toFormikValidator(validatePassword);
-function notEmpty(string) { 
-    if (string === '') {
-        return "Cannot be empty.";
-    }
-    return undefined;
 }
 
 function FailWrapper(props) {
@@ -66,10 +56,10 @@ export function SignUpScreen() {
                     <h1> Sign Up </h1>
                     <Form>
                         <label>email</label>
-                        <Field name="email" type="text" validate={fvalidateEmail} />
+                        <Field name="email" type="text" validate={validateEmail} />
                         <FailWrapper name="email"/>
                         <label>Password</label>
-                        <Field name="password" type="password" validate={fvalidatePassword} />
+                        <Field name="password" type="password" validate={validatePassword} />
                         <FailWrapper name="password"/>
                         <label>First Name</label>
                         <Field name="firstName" type="text" validate={notEmpty} />

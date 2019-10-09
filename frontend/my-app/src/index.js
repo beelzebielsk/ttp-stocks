@@ -5,7 +5,7 @@ import './index.css';
 import {LoginScreen, Portfolio, SignUpScreen,
     TransactionsViewer} from './components/index';
 import jwt from 'jsonwebtoken';
-import {fetchBackend} from './api';
+import {fetchBackend, sendJSONBackend} from './api';
 
 import {Form} from './components/form';
 
@@ -53,14 +53,10 @@ class App extends React.Component {
     async login(email, password) {
         console.log("enter login.");
         let credentials = {email, password};
-        //FIXME: Put the URL here into an environment variable.
-        const tokenResponse = await fetchBackend('/login', {
-            method: 'POST',
-            body: JSON.stringify(credentials),
-            headers: {
-                'Content-Type' : 'application/json',
-            },
-        });
+        const tokenResponse = await sendJSONBackend('/login',
+            credentials,
+            { method: 'POST' }
+        );
         if (!tokenResponse.ok) {
             return { 
                 success: false,

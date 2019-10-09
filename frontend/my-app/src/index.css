@@ -78,10 +78,19 @@ a {
     text-align: center;
 }
 
+.failMessage {
+    color: hsl(0, 80%, 50%);
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: .3rem 0 .5rem 0;
+}
+
 .form input {
     display: block;
     box-sizing: border-box;
     width: 100%;
+    padding: .5rem 0 .1rem;
 }
 
 /* Source:

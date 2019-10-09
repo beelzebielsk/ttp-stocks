@@ -45,7 +45,7 @@ app.param('userId', (req, res, next, id) => {
  *   that a user has credentials, but not the right kind. When they're
  *   not the user who can perform the action
  *      - Any of the GET routes which should only be available to a
- *        particular user.
+ *        particular user. (not implemented)
  * - 404, Not Found: When nothing matches the request URI. Express
  *   should handle this for me. I have no reason to send this myself.
  * - 409, Conflict: When performing the request would result in some
@@ -66,24 +66,29 @@ app.param('userId', (req, res, next, id) => {
  *        Frontend will handled this for now.
  *      / Dupe email address. Apprently 403 and 409 fits this
  *        perfectly.  Create dupe record is stated in the description.
+ *        I will use 409.
  * - GET /user/:userId: Gives user information
  *      / Someone is not authorized to get the information. Only the
  *        user themselves should be capable of getting user
  *        information.
+ *      - The user with :userId doesn't exist.
  *      - Some DB error which I'd know nothing about.
  * - POST /transaction: Creates a new transaction.
  *      / The required JSON fields aren't there.
  *      / Not authorized at all.
  *      / Not the same user as is in userId.
+ *      - The user with doesn't exist.
  *      - Some DB error which I'd know nothing about.
  * - GET /transaction/:userId: Gets all transactions associated with
  *   that user.
  *      / Not authorized at all.
  *      / Not the same user as is in userId.
+ *      - The user with :userId doesn't exist.
  * - GET /stocks/:userId: Gets all owned stocks associated with that
  *   user.
  *      / Not authorized at all.
  *      / Not the same user as is in userId.
+ *      - The user with :userId doesn't exist.
  */
 //FIXME: Currently, both back and frontend have a preshared
 //secret which is stored in the source of each file. Change backend to
@@ -135,7 +140,7 @@ app.post('/user', async (req, res) => {
     } catch(err) {
         console.error("error type:", err.name);
         if (err.name === 'SequelizeUniqueConstraintError') {
-            res.status(403).send("User with this email already exists");
+            res.status(409).send("User with this email already exists");
         }
         //TODO: What do I do with response here?
     }
@@ -158,7 +163,6 @@ app.get('/user/:userId', verifyCredentials, async (req, res) => {
  * the same stock under that user's id. 
  *
  * FIXME: This should only be available to an authenticated user.
- * FIXME: Reduce a user's balance by the price of the transaction.
  */
 app.post('/transaction', validateJSONFields([
     'tickerName', 'numStocks', 'price', 'userId'
@@ -168,8 +172,6 @@ app.post('/transaction', verifyCredentials, async (req, res) => {
     console.log('user id:', userId);
     const transaction = await models.sequelize.transaction();
     try {
-        // NOTE: Must capitalize UserId attribute to set it normally.
-        // It is not clear why.
         const user = await models.User.findByPk(userId);
         if (user.balance < price) {
             res.status(403).send("Not enough money for transaction.");
@@ -178,6 +180,8 @@ app.post('/transaction', verifyCredentials, async (req, res) => {
         await user.update(
             {balance: user.balance - price},
             {fields: ['balance'], transaction});
+        // NOTE: Must capitalize UserId attribute to set it normally.
+        // It is not clear why.
         const record = {
             tickerName, numStocks, price, UserId: userId
         };
@@ -188,7 +192,7 @@ app.post('/transaction', verifyCredentials, async (req, res) => {
         });
         //console.log('stock balance', stockBalance);
         if (stockBalance === null) {
-            // Q: Why did I have to capitalize the first U in userId
+            // NOTE: Why did I have to capitalize the first U in userId
             // here to make this work?
             await models.OwnedStock.create({
                 tickerName, numStocks, UserId: userId

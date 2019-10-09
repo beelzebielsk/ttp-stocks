@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken');
 const models = require('./models')
 const allowCors = require('./middlewares/cors');
 const validateJSONFields = require('./middlewares/validate-json-fields');
+const verifyJWTToken = require('./middlewares/verify-token');
 
 const PORT = process.env.PORT || 8000;
 const app = express()
@@ -91,6 +92,7 @@ const secret = 'secret';
 
 app.post('/login', validateJSONFields(['email', 'password']));
 app.post('/login', async (req, res) => {
+    console.log('req.body', req.body);
     const {email, password} = req.body;
 
     const user = await models.User.findOne({

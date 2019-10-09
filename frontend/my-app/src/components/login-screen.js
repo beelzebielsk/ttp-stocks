@@ -2,15 +2,7 @@
 import React from 'react';
 import {validateEmail, validatePassword} from './form-validators';
 import {Formik, Field, ErrorMessage, Form} from 'formik';
-
-
-function FailMessage({children}) {
-    return (
-        <div className="failMessage">
-            {children}
-        </div>
-    );
-}
+import {FailMessage} from './fail-message';
 
 /** 
  * A component to render a sign-in form.

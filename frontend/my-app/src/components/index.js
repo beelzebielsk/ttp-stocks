@@ -5,6 +5,7 @@ import {SignUpScreen} from './sign-up-screen';
 import {Stock} from './stock';
 import {TransactionsViewer} from './transactions-viewer';
 import {Portfolio} from './portfolio-screen';
+import {FailMessage} from './fail-message';
 
 export {LoginScreen, Currency, Percent,
     OwnedStocks, SignUpScreen, Stock,

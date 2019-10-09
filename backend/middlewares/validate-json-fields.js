@@ -9,7 +9,7 @@
  */
 module.exports = function validateJSONFields(fields) {
     return (req, res, next) => {
-        if (req.header['content-type'] !== 'application/json') {
+        if (req.header('content-type') !== 'application/json') {
             next();
         }
         console.log('json validator:', req.body);
@@ -19,9 +19,12 @@ module.exports = function validateJSONFields(fields) {
                 missingFields.push(field);
             }
         }
+        console.log('found missing fields');
         if (missingFields.length > 0) {
             res.status(400).send("Missing JSON fields in request: " +
                 missingFields.join(", "));
+            return;
         }
+        next();
     };
 }

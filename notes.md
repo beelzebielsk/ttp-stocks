@@ -38,63 +38,84 @@ Planning
 - Authentication needs to get made
 - Make a require json properties middleware to validate json messages
   to endpoints that require a json formatted request.
+- frontend needs to get made
+    - routing to different components
+    - sign in needs to be recycled from Login example
+    - sign up component
+    - add purchasing to portfolio component
+    - transactions component
+- add user balance to stock purchasing component
+- Make sure someone can only buy whole number amounts of stock.
+- Make sure someone can only buy stocks from a valid ticker.
+- Change portfolio to distinguish bw not yet having gotten stocks and
+  having no stocks.
+- write logout logic. 
+- Make password input not show chars.
+- Make portfolio look better. Like a real table.
+- Display user balance in portfolio
+- Change transaction creation endpoint to also update user balance iff
+  there's enough money to cover the price, and cancel
+  transaction+return error otherwise.
+- A decent model for the portfolio page <https://www.bloomberg.com/markets/stocks>
+- Use formik
+    - Unify the three forms.
+    - The form problem reasons don't disappear after a successful
+      submission. Formik may be good next step.
+
+### REQUIRED
 
 ### Up next
 
-- frontend needs to get made
-    / routing to different components
-    / sign in needs to be recycled from Login example
-    / sign up component
-    - add purchasing to portfolio component
-    - add user balance to stock purchasing component
-    / transactions component
-- Unify the three forms.
+- Update portfolio with new purchaes that the user makes.
 - Put authentication guards over endpoints in the API. Make sure to
   put auth header in any request to API endpoint that will eventually
   require it.
-- Make sure someone can only buy whole number amounts of stock.
-- Make sure someone can only buy stocks from a valid ticker.
-- Make sure someone can only buy stocks if they have enough money.
-- Change transaction endpoint in API to alter a user's balance for
-  stocks purchased.
+    - Put everything that should be guarded to a specific user on one
+      router and give that router a middleware that implements this.
+    - One middleware should check for authentication: the presence of
+      an authentication header and a jwt token, verify the token, and
+      put the token on the request as req.credentials
+    - Another middleware should check that the id claim matches the id
+      of the user being work done on.
 - there should be a quick-and-easy way to block someone from
     seeing restricted pages. A way to just say "this is blocked off
     if you don't satisfy some condition, like valid signed token in
     localStorage".
-- Change portfolio to distinguish bw not yet having gotten stocks and
-  having no stocks.
-- Change transaction creation endpoint to also update user balance iff
-  there's enough money to cover the price.
 
 ### Remaining
 
 - Keep the documentation consistent. Use param everywhere, or use prop
   for all react properties expected.
+- After successful sign-up, user should be routed to login.
+- After successful sign-in, user should be routed to portfolio.
+- Change to secrets which are asymmetric and allow backend to share
+  pub key for verifcation.
+- Don't transmit passwords unencrypted (change to https in back and
+  frontend).
+- Store passwords better in db
+- Maybe good hook uses
+    - Fade in previous value, or take action based on previous value
+      of some prop or something.
+    - The loading, then fetch behavior. That's common.
+
+### Some Other Day
+
 - The open price is sometimes null from IEX. When? Why?
     - <https://iexcloud.io/docs/api/#quote> has some info. says
       > Refers to the official open price from the SIP. 15 minute
       > delayed (can be null after 00:00 ET, before 9:45 and weekends)
     - Is there info which states when it will definitely be avail so I
       can give user message or warning?
-- After successful sign-up, user should be routed to login.
-- After successful sign-in, user should be routed to portfolio.
-- A decent model for the portfolio page <https://www.bloomberg.com/markets/stocks>
 - Find and use a linter.
 - Make color changes in portfolio use a transition, if you update the
   prices on the page over time, or implement refresh button.
-- Change to secrets which are asymmetric and allow backend to share
-  pub key for verifcation.
-- Don't transmit passwords unencrypted.
-- Store passwords better in db
 - Follow [these directions](https://iexcloud.io/docs/api/#attribution)
   at the end.
-- write logout logic. 
 - Make api calls to stocks from backend. My API key should NOT be in
   my frontend. Though I can do as such at the start.
-- Maybe good hook uses
-    - Fade in previous value, or take action based on previous value
-      of some prop or something.
-    - The loading, then fetch behavior. That's common.
+- Password confirmation
+    - make sure dont show chars
+
 
 I need a backend and a frontend. They want user authentication. The
 backend has to store users that will get registered. And I suppose it
@@ -158,13 +179,14 @@ existing account. (done)
     1. Should not allow a user with no existing account (ie a user
     that cannot submit a valid email/pass pair) to login. (done)
 2. SHould have a sign up page, where a user can create a new account
-with which to sign in.
+with which to sign in. (done)
     1. The initial balance of a user's account should be $5000. (done)
     2. No email should be usable for registration more than once.
+       (done)
 3. Should have a user portfolio page.
     1. Should display the worth of each stock in their portfolio at
     the moment that the page is opened (or some decent defn of
-    'current moment').
+    'current moment'). (done)
         1. If the price of the stock is the same as it was at the
         day's open, display grey. (done)
         2. If the price of the stock is *less than* it was at the
@@ -175,20 +197,20 @@ with which to sign in.
     2. Should display the net worth of all of their stocks in their
     portfolio. (done)
     3. Should allow user to purchase new stocks from a single company
-    at a time.
+    at a time. (done)
     4. Should display user's balance of cash.
     5. Should allow a user to purchase a stock from a company at the
     stock's current price.
-        1. Can only buy from a valid ticker.
-        2. Can only buy if they have enough cash.
-        3. Can only buy whole number quantities of shares
+        1. Can only buy from a valid ticker. (done)
+        2. Can only buy if they have enough cash. (done)
+        3. Can only buy whole number quantities of shares (done)
         4. me: Cannot buy more stocks than exist at the moment for the
         company.
 4. Should have user transactions page.
     1. Should show the ticker name, number of stocks purchased, and
     the full price of the transaction at the price/time that the
-    transaction took place.
-5. Visitor should not be able to access transaction or portfolio page
+    transaction took place. (done)
+5. me: Visitor should not be able to access transaction or portfolio page
 without being logged in.
 
 Roadblocks
@@ -606,6 +628,35 @@ For now, my workaround is to capitalize the first U in userId. I don't
 think this would work universally, it may only work for sqlite because
 names aren't case sensitive in sqlite.
 
+### Destructuring Syntax in JS
+
+<https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment>
+
+Helps for function declarations, too.
+
+### Styling
+
+<https://leetcode.com/accounts/login/>
+
+The two forms look very consistent.
+
+<https://iexcloud.io/cloud-login#/register/>
+
+### Unifying Forms
+
+<https://github.com/tannerlinsley/react-form>
+
+This could help, if I can work with it quickly
+
+<https://jaredpalmer.com/formik>
+
+This looks good, too. More in-line with what I envisioned myself, so
+easier to use.
+
+<https://jaredpalmer.com/formik/docs/tutorial>
+
+very promising for making forms look consistent and better.
+
 ### Others
 
 - What does `ReactDOM` do? How does react make sure that
@@ -621,6 +672,7 @@ names aren't case sensitive in sqlite.
   than a bunch of logic for each validator, just try running all the
   validators in a try, and handle failure once in a catch. The
   validators return the value of correct type (eg numbers get parsed).
+
 
 extending  ideas
 ================
@@ -768,6 +820,11 @@ index of the project.
 ========================================================================
 
 When an input has type number, calling value on it still returns a string.
+
+HTML Input Element Chars
+========================
+
+<https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement>
 
 Sequelize 
 =========

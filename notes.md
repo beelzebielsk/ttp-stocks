@@ -61,12 +61,15 @@ Planning
     - Unify the three forms.
     - The form problem reasons don't disappear after a successful
       submission. Formik may be good next step.
-
-### REQUIRED
+- Update portfolio with new purchaes that the user makes.
+    - It's cheap. Complete update every time.
+- Store passwords better in db
 
 ### Up next
 
-- Update portfolio with new purchaes that the user makes.
+- Don't transmit passwords unencrypted (change to https in back and
+  frontend).
+    - Just use HTTPS for now.
 - Put authentication guards over endpoints in the API. Make sure to
   put auth header in any request to API endpoint that will eventually
   require it.
@@ -90,9 +93,6 @@ Planning
 - After successful sign-in, user should be routed to portfolio.
 - Change to secrets which are asymmetric and allow backend to share
   pub key for verifcation.
-- Don't transmit passwords unencrypted (change to https in back and
-  frontend).
-- Store passwords better in db
 - Maybe good hook uses
     - Fade in previous value, or take action based on previous value
       of some prop or something.

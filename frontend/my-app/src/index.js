@@ -86,9 +86,6 @@ class App extends React.Component {
         }
     }
 
-    //TODO: Implement me. I should clear all state related to user
-    //identity, and any entries in local storage. If I ever invalidate
-    //jwt tokens, then I should perform that here, too.
     logout() {
         localStorage.removeItem('token');
         this.setState({
@@ -99,8 +96,6 @@ class App extends React.Component {
         });
     }
     
-    // TODO: Set the route correctly for the login. Don't just render
-    // the login, route them to that page.
     render() {
         if (!this.state.authenticated) {
             return (

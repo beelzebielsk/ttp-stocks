@@ -72,13 +72,17 @@ class App extends React.Component {
         try {
             let payload = jwt.verify(token, secret);
             console.log('token payload:', payload);
+            //NOTE: setting localStorage has to come before! putting
+            //it after setState can mean that storage is not set while
+            //re-render happens. Can cause subtle timing bug where the
+            //next element is not authorized.
+            localStorage.setItem('token', token)
             this.setState({
                 userId: payload.id,
                 firstName: payload.firstName,
                 lastName: payload.lastName,
                 authenticated: true
             });
-            localStorage.setItem('token', token);
             return {success: true};
         } catch(err) {
             console.error(err);

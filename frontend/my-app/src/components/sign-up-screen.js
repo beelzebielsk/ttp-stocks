@@ -2,14 +2,10 @@ import React from 'react';
 import {fetchBackend} from '../api';
 import {validateEmail, validatePassword, fieldNotEmpty as notEmpty} from './form-validators';
 import {Formik, Field, ErrorMessage, Form} from 'formik';
-import {FailMessage} from './fail-message';
+import {FailMessage, FailWrapper} from './fail-message';
 
 function toFormikValidator(validator) {
     return (...args) => validator(...args).reason;
-}
-
-function FailWrapper(props) {
-    return <ErrorMessage {...props} component={FailMessage}/>;
 }
 
 /** 

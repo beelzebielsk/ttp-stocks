@@ -19,12 +19,15 @@ async function createNewTransaction({userId, price, numStocks, tickerName}) {
  * A component to render a sign-in form.
  * Props:
  * @prop {int} userId - the id of the logged in user.
+ * @prop {Function} handlePurchase - A function which takes no
+ * arguments which will be run after a successful purchase has been
+ * made.
  *
  * - render the form for tickername and amount
  * - write the backend call to commit the transaction
  * - respond to the success or failure of the api call
  */
-export function StockPurchase ({userId}) {
+export function StockPurchase ({userId, handlePurchase}) {
     async function handleSubmit(values, actions) {
         console.log("enter handleSubmit of stock purchase.");
         console.log(actions);
@@ -49,6 +52,9 @@ export function StockPurchase ({userId}) {
                 actions.setStatus(await apiSuccess.text());
                 actions.setSubmitting(false);
                 return;
+            }
+            if (handlePurchase) {
+                handlePurchase();
             }
         } catch (err) {
             if (err.name === "RangeError") {

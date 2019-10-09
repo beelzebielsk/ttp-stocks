@@ -31,7 +31,7 @@ export function validateTickerName(tickerName) {
     return {success: true};
 }
 
-export function validatePositiveInteger(number) {
+function validatePositiveInteger(number) {
     if (number === '') {
         return {success: false, reason: "Number field is empty"};
     }
@@ -47,3 +47,10 @@ export function validatePositiveInteger(number) {
     }
     return {success: true};
 }
+
+function formikizeValidator(validator) {
+    return value => validator(value).reason;
+}
+
+const formikValidatePositiveInteger = formikizeValidator(validatePositiveInteger);
+export {formikValidatePositiveInteger as validatePositiveInteger};

@@ -109,6 +109,7 @@ a {
 
 .form label {
     font-size: .8rem;
+    text-transform: capitalize;
 }
 
 /* }}} **************************************************************/

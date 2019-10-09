@@ -1,9 +1,19 @@
 import React from 'react';
 import {Currency} from './number-display';
 import {Loading} from './loading';
-import {validateTickerName, validatePositiveInteger} from './form-validators';
+import {validatePositiveInteger, fieldNotEmpty} from './form-validators';
 import {fetchBackend, sendJSONBackend} from '../api';
 import {getQuote} from '../iex-api';
+import {FailMessage, FailWrapper} from './fail-message';
+import {Formik, Field, ErrorMessage, Form} from 'formik';
+
+async function createNewTransaction({userId, price, numStocks, tickerName}) {
+    return sendJSONBackend('/transaction',
+        {userId, price, numStocks, tickerName},
+        { method: 'POST' }
+    );
+}
+
 
 /** 
  * A component to render a sign-in form.
@@ -14,140 +24,66 @@ import {getQuote} from '../iex-api';
  * - write the backend call to commit the transaction
  * - respond to the success or failure of the api call
  */
-export class StockPurchase extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            tickerName: "",
-            amount: "",
-            failedAttempt : false,
-            failReason: "",
-        };
-
-        this.handleKeyPress = this.handleKeyPress.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    // never changes bw all forms
-    handleChange(e) {
-        this.setState({
-            [e.currentTarget.name]: e.currentTarget.value
-        });
-    }
-
-    // never changes bw all forms
-    async handleKeyPress(e) {
-        //console.log(e.key);
-        if (e.key === 'Enter') {
-            await this.handleSubmit(e);
-        }
-    }
-
-    async createNewTransaction({userId, price, numStocks, tickerName}) {
-        return sendJSONBackend('/transaction',
-            {userId, price, numStocks, tickerName},
-            { method: 'POST' }
-        );
-    }
-    
-    // always changes b/w the forms
-    // what never changes is that it doesn't return anything
-    // it sets the failReason and failedAttempt states when some
-    // failure occurs due to invalid fields.
-    // I could separate out field validation from handleSubmit, which
-    // would make it smaller, easier to read. They're not really the
-    // same job, though fields need to be validated before submission
-    // happens.
-    // TODO: Separate out the validation from the handling of
-    // submission. Submission logic should just take the form fields,
-    // after they've been validated and converted into correct type
-    // from strings (eg numbers parsed to numbers)
-    // TODO: This component will have to notify portfolio that a
-    // purchase has been made, so it can refresh the portfolio. One
-    // way to do this is to have a prop onSubmit which gets run when
-    // submission is successful. It would be the last line to execute
-    // in handleSubmit, running prop.onSubmit if it exists.
-    async handleSubmit(e) {
+export function StockPurchase ({userId}) {
+    async function handleSubmit(values, actions) {
         console.log("enter handleSubmit of stock purchase.");
-        let validationSuccess = validateTickerName(this.state.tickerName);
-        // while the names of the state the hold the form variables
-        // change, the general method of reporting errors does not:
-        // perform action on current value of the state var, and give
-        // a success indication and reason for failure if any.
-        if (!validationSuccess.success) {
-            this.setState({
-                failedAttempt: true,
-                failReason: validationSuccess.reason,
-            });
-            return;
-        }
-        validationSuccess = validatePositiveInteger(this.state.amount);
-        if (!validationSuccess.success) {
-            this.setState({
-                failedAttempt: true,
-                failReason: validationSuccess.reason,
-            });
-            return;
-        }
-        const numStocks = Number(this.state.amount);
+        console.log(actions);
+        console.log("userId on bag?", actions.userId);
+        const numStocks = Number(values.amount);
+        let apiSuccess;
         try {
-            const {latestPrice} = await getQuote(this.state.tickerName);
+            const {latestPrice} = await getQuote(values.tickerName);
             const price = numStocks * latestPrice;
-            const apiSuccess = await this.createNewTransaction({
-                tickerName: this.state.tickerName, 
+            apiSuccess = await createNewTransaction({
+                tickerName: values.tickerName, 
                 numStocks,
-                userId: this.props.userId,
+                userId: userId,
                 price,
             });
             if (!apiSuccess.ok && apiSuccess.status === 403) {
-                throw RangeError("You do not have enough money to make this purchase.");
+                actions.setStatus("You do not have enough money to make this purchase.");
+                actions.setSubmitting(false);
+                return;
             }
             if (!apiSuccess.ok) {
-                throw RangeError(await apiSuccess.text());
+                actions.setStatus(await apiSuccess.text());
+                actions.setSubmitting(false);
+                return;
             }
         } catch (err) {
             if (err.name === "RangeError") {
-                this.setState({
-                    failedAttempt: true,
-                    failReason: err.message,
-                });
+                actions.setStatus(err.message);
+                actions.setSubmitting(false);
+                return;
             }
+            throw err;
         }
     }
-
-    // Not sure if/how this will change b/w the forms, but it would be
-    // nice if it didn't matter. I can imagine putting a failReason
-    // element of some kind somewhere, and I will definitely put
-    // inputs into the form. It would be nice if I could have the form
-    // figure out the state to keep track of from the children passed
-    // to it.
-    // The label names may change a bit from the input names.
-    render() {
-        let failReason = <span></span>;
-        if (this.state.failedAttempt) {
-            failReason = <span id="failMessage">{this.state.failReason}</span>;
-        }
-        return (
-            <div onKeyPress={this.handleKeyPress} 
-                id="stockPurchaseForm"
-                className="form"
-                >
-            <label>Ticker Name</label>
-            <input name="tickerName" 
-                type="text" 
-                value={this.state.tickerName}
-                onChange={this.handleChange}/>
-            <label>Amount to Purchase</label>
-            <input name="amount" 
-                type="text" 
-                value={this.state.amount}
-                onChange={this.handleChange}
-                />
-            <button onClick={this.handleSubmit}>Purchase Stock</button>
-            {failReason}
-            </div>
-        );
-    }
+    return (
+        <div id="stockPurchaseForm" className="form">
+            <Formik
+                onSubmit={handleSubmit}
+                userId={userId}
+                initialValues={{
+                    tickerName: "",
+                    amount: "",
+                }}
+            >
+            {({status, values, errors}) => (
+                <Form>
+                    <label>Ticker Name</label>
+                    <Field type="text" name="tickerName" placeholder="AAPL"
+                        validate={fieldNotEmpty}/>
+                    <FailWrapper name="tickerName" />
+                    <label>Amount to Purchase</label>
+                    <Field type="number" name="amount"
+                        validate={validatePositiveInteger}/>
+                    <FailWrapper name="amount" />
+                    <button type="submit">Purchase Stock</button>
+                    {status && <FailMessage>{status}</FailMessage>}
+                </Form>
+            )}
+        </Formik>
+    </div>
+    );
 }
-

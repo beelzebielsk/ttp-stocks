@@ -100,11 +100,11 @@ app.post('/login', async (req, res) => {
         where: {email}
     });
     if (user === null) {
-        res.status(401).send("No user with that name and password exists.");
+        res.status(401).send("No user with that email and password exists.");
         return;
     }
     if (!(await bcrypt.compare(password, user.password))) {
-        res.status(401).send("No user with that name and password exists.");
+        res.status(401).send("No user with that email and password exists.");
         return;
     }
     const token = jwt.sign({

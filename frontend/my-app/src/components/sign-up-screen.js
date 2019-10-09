@@ -1,36 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {sendJSONBackend} from '../api';
 import {validateEmail, validatePassword, fieldNotEmpty as notEmpty} from './form-validators';
 import {Formik, Field, ErrorMessage, Form} from 'formik';
 import {FailMessage, FailWrapper} from './fail-message';
 
-function toFormikValidator(validator) {
-    return (...args) => validator(...args).reason;
-}
-
 /** 
  * A component to render a sign-up form.
  *
- * - needs to render a form that takes in email, password, first name
- *   and last name. 
- * - needs to validate those inputs
- * - needs to submit api request to make a new user
- * - needs to handle response from that request to instruct user what
- *   to do if request was unsuccessful.
- * - When finished, should make user go to sign in page.
- * - I can imagine wanting to build on this base, especially as I try
- *   to make forms look nicer/better.
- * - Each form can outsource the work for figuring out if and why some
- *   input is invalid, and they take the reason in the same way:
- *   through a {success, reason} object. I can try to standardize all
- *   of this through a reusable form component.
+ * @prop{function} renderAfter - A function which returns a react
+ * component. Will render the form body after a successful submission.
+ * Takes no props.
  *
- * 3 forms:
- * - sign up
- * - sign in
- * - purchase stock
  */
-export function SignUpScreen() {
+export function SignUpScreen({renderAfter}) {
+    let [successfulSubmission, setSubmissionStatus] = useState(false);
+    if (successfulSubmission && renderAfter) {
+        return renderAfter();
+    }
     return (
         <Formik 
             initialValues={{
@@ -45,6 +31,7 @@ export function SignUpScreen() {
                 if (!apiSuccess.success) {
                     actions.setStatus(apiSuccess.reason);
                 }
+                setSubmissionStatus(true);
                 actions.setSubmitting(false);
             }}
             render={({values, errors, status}) => (

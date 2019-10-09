@@ -1,5 +1,5 @@
 import React from 'react';
-import {fetchBackend} from '../api';
+import {sendJSONBackend} from '../api';
 import {validateEmail, validatePassword, fieldNotEmpty as notEmpty} from './form-validators';
 import {Formik, Field, ErrorMessage, Form} from 'formik';
 import {FailMessage, FailWrapper} from './fail-message';
@@ -74,13 +74,9 @@ export function SignUpScreen() {
 
 async function createNewUser({email, password, firstName, lastName}) {
     console.log('create new user entered');
-    let response = await fetchBackend('/user', {
-        method: 'POST',
-        body: JSON.stringify({email, password, firstName, lastName}),
-        headers: {
-            'Content-Type' : 'application/json',
-        }
-    });
+    let response = await sendJSONBackend('/user',
+        {email, password, firstName, lastName},
+        { method: 'POST' });
     //TODO: This piece is shared with login. Is there some way to
     //extract this general pattern of {success, reason} and api
     //responses?

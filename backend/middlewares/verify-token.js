@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken');
 module.exports = function verifyJWTToken(secretOrPublicKey) {
     return (req, res, next) => {
         console.log("verifying jwt token");
-        if (req.header('Authorization') === undefined) {
+        if (req.header('authorization') === undefined) {
             console.log("No auth header.");
             res.status(401).send("Need to present authorization token.");
             return;
@@ -29,7 +29,7 @@ module.exports = function verifyJWTToken(secretOrPublicKey) {
         } catch (err) {
             if (err.name === 'JsonWebTokenError') {
                 res.status(401).send("Invalid token submitted.");
-                return
+                return;
             }
             next(err);
         }

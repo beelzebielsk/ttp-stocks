@@ -11,6 +11,7 @@ module.exports = function validateJSONFields(fields) {
     return (req, res, next) => {
         if (req.header('content-type') !== 'application/json') {
             next();
+            return;
         }
         console.log('json validator:', req.body);
         let missingFields = [];
@@ -19,8 +20,8 @@ module.exports = function validateJSONFields(fields) {
                 missingFields.push(field);
             }
         }
-        console.log('found missing fields');
         if (missingFields.length > 0) {
+            console.log('found missing fields');
             res.status(400).send("Missing JSON fields in request: " +
                 missingFields.join(", "));
             return;

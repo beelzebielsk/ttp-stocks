@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {BrowserRouter as Router, Switch, Route, Link, Redirect} from 'react-router-dom';
 import ReactDOM from 'react-dom';
 import './index.css';
@@ -19,6 +19,29 @@ const secret = 'secret';
 
 function LogoutButton({onClick: clickHandler}) {
     return <button onClick={clickHandler}>Sign Out</button>;
+}
+
+/*  Take a component and return a new component that takes a single
+ *  renderAfter prop and then forwards all other props to the child
+ *  component
+ *
+ *  There has to be a way to attach some method that lets the
+ *  renderafter prop know when to render the after stuff.
+ *
+ *  Basically, I need a way to manipulate setSubmissionStatus from
+ *  SignUpScreen using a different component. Either a HOC or render
+ *  prop component.
+ *
+ *  children is a function which takes props and returns a react
+ *  component. The props received are {switchToAfter}
+ */
+function RenderAfter({children, after}) {
+    let [showAfter, switchToShowAfter] = useState(false);
+    let setShowAfter = () => {switchToShowAfter(true);};
+    if (showAfter) {
+        return after;
+    } 
+    return children({switchToAfter : setShowAfter});
 }
 
 function Site({children, ...rest}) {
@@ -112,9 +135,11 @@ class App extends React.Component {
                             <LoginScreen handleLogin={this.login} />
                         </Route>
                         <Route path="/signup">
-                            <SignUpScreen 
-                                renderAfter={() => <Redirect to="/"/>}
-                            />
+                            <RenderAfter after={<Redirect to="/" />}>
+                                {({switchToAfter}) => (
+                                    <SignUpScreen onSubmit={switchToAfter} />
+                                )}
+                            </RenderAfter>
                         </Route>
                         <Route path="/">
                             <Redirect to="/" />

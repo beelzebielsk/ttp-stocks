@@ -7,16 +7,13 @@ import {FailMessage, FailWrapper} from './fail-message';
 /** 
  * A component to render a sign-up form.
  *
- * @prop{function} renderAfter - A function which returns a react
- * component. Will render the form body after a successful submission.
- * Takes no props.
+ * @prop{function} afterSuccessfulSubmit - A function to be executed
+ * after a successful submission of the SignUpScreen form.
  *
  */
-export function SignUpScreen({renderAfter}) {
-    let [successfulSubmission, setSubmissionStatus] = useState(false);
-    if (successfulSubmission && renderAfter) {
-        return renderAfter();
-    }
+export function SignUpScreen({onSubmit: afterSuccessfulSubmit}) {
+    // Default is to do nothing.
+    afterSuccessfulSubmit = afterSuccessfulSubmit || (() => {});
     return (
         <Formik 
             initialValues={{
@@ -31,7 +28,7 @@ export function SignUpScreen({renderAfter}) {
                 if (!apiSuccess.success) {
                     actions.setStatus(apiSuccess.reason);
                 } else {
-                    setSubmissionStatus(true);
+                    afterSuccessfulSubmit();
                 }
                 actions.setSubmitting(false);
             }}

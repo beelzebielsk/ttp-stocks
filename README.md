@@ -36,8 +36,9 @@ Once you obtain it, you can set it permanently by doing the following:
 Replace the `${your_IEX_cloud_token}` with the sandbox api token you
 got earlier from the IEX cloud website.
 
-NOTE: If you don't want to set up the `.env.development.local` file,
-you can just do 
+**NOTE:** 
+
+If you don't want to set up the `.env.development.local` file, you can just do 
 
     export REACT_APP_API_KEY='${your_IEX_cloud_token}'
 

@@ -28,6 +28,7 @@ models.sequelize.sync({force: false})
             console.log(`Server is up and running on port: ${PORT}`)
         })
     })
-    .catch(() => {
-            console.log(`Error, server is not running.`)
+    .catch((e) => {
+            console.error('Error, server is not running');
+            console.error(e.toString());
     })

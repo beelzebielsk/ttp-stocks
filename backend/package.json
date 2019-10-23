@@ -2,8 +2,8 @@
   "name": "ttp-stocks-backend",
   "version": "0.1.0",
   "description": "Buy and sell your stocks, heah!",
-  "engines" : {
-      "node" : "12.x"
+  "engines": {
+    "node": "12.x"
   },
   "main": "index.js",
   "scripts": {
@@ -32,6 +32,8 @@
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
+    "pg": "^7.12.1",
+    "pg-hstore": "^2.3.3",
     "sequelize": "^5.19.2",
     "sqlite3": "^4.1.0"
   },

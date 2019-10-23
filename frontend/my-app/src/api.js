@@ -1,6 +1,7 @@
 'use strict';
 /* Information about contacting the backend of stocks website */
-const API_URL='http://localhost:8000/api';
+const API_URL = process.env.REACT_APP_PROJECT_API_URL;
+console.log("API URL:", API_URL);
 /**
  * Make a fetch request to the backend.
  * @param {string} url - url relative to the root of the backend URL.

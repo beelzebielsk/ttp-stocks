@@ -1,7 +1,10 @@
 {
-  "name": "ttp-stocks",
+  "name": "ttp-stocks-backend",
   "version": "0.1.0",
   "description": "Buy and sell your stocks, heah!",
+  "engines" : {
+      "node" : "12.x"
+  },
   "main": "index.js",
   "scripts": {
     "start": "node app.js",

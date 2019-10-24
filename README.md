@@ -1,13 +1,34 @@
+All directions assume that you're starting in the root directory of
+the repository. Any time you see a series of commands like so:
+
+    npm install
+    npx sequelize db:migrate
+    npx sequelize db:seed:all
+    cd ..
+
+It is assumed that you're starting off in the repository root. So if
+you see one series:
+
+    cmd1
+    cmd2
+    ...
+
+And then another:
+
+    cmd3
+    cmd4
+    ...
+
+I'm assuming `cmd1` and `cmd3` are executed in the repository root.
+
 # Setting up this project
 
-All directions assume that you're starting in the root directory of
-the repository, and tell you to navigate back to the root directory
-when you're finished. You don't have to navigate exactly as I've said
-if you know what you're doing.
+In each set of commands, I tell you to navigate back to the root
+directory when you're finished. You don't have to navigate exactly as
+I've said if you know what you're doing.
 
 First, setup the backend: 
 
-    cd backend
     npm install
     npx sequelize db:migrate
     npx sequelize db:seed:all
@@ -15,9 +36,9 @@ First, setup the backend:
 
 Next, setup the frontend. First step is to install frontend packages:
 
-    cd frontend/my-app
+    cd frontend
     npm install
-    cd ../..
+    cd ..
 
 Next is to set the environment variable which holds the token for the
 IEX stocks API that this project uses. You have to obtain a token for
@@ -54,10 +75,9 @@ at the root of the repository.
 
 In the first terminal:
 
-    cd backend
     npm start
 
 In the second terminal:
 
-    cd frontend/my-app
+    cd frontend
     npm start

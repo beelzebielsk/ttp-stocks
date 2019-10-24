@@ -8,8 +8,10 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
+    "build": "cd frontend && npm install && npm run build",
     "devStart": "nodemon -L app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "startProduction" : "NODE_ENV='production' node app.js"
   },
   "repository": {
     "type": "git",

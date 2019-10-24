@@ -5,7 +5,7 @@
   "engines": {
     "node": "12.x"
   },
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "devStart": "nodemon -L app.js",
@@ -35,10 +35,11 @@
     "pg": "^7.12.1",
     "pg-hstore": "^2.3.3",
     "sequelize": "^5.19.2",
-    "sqlite3": "^4.1.0"
+    "sqlite3": "^4.1.0",
+    "sequelize-cli": "^5.5.1"
   },
   "devDependencies": {
-    "nodemon": "^1.19.3",
-    "sequelize-cli": "^5.5.1"
+    "dotenv": "^8.2.0",
+    "nodemon": "^1.19.3"
   }
 }

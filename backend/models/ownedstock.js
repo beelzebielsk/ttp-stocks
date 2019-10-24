@@ -1,6 +1,6 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const OwnedStock = sequelize.define('OwnedStock', {
+  const OwnedStock = sequelize.define('ownedStock', {
     tickerName : {
         type: DataTypes.STRING,
         allowNull: false,
@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   OwnedStock.associate = function(models) {
     // associations can be defined here
-      models.OwnedStock.belongsTo(models.User);
+      models.ownedStock.belongsTo(models.user);
   };
   return OwnedStock;
 };

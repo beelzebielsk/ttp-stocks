@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-      return queryInterface.bulkInsert('OwnedStocks', [{
+      return queryInterface.bulkInsert('ownedStocks', [{
           tickerName: 'msft',
           numStocks: 300,
           userId: 1,
@@ -19,6 +19,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-      return queryInterface.bulkDelete('OwnedStocks', null, {});
+      return queryInterface.bulkDelete('ownedStocks', null, {});
   }
 };

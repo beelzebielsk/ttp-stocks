@@ -4,7 +4,7 @@ const start = new Date('January 1, 2019 00:00:00').valueOf();
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-      return queryInterface.bulkInsert('Transactions', [{
+      return queryInterface.bulkInsert('transactions', [{
           tickerName: 'msft',
           numStocks: 100,
           price: 100,
@@ -31,6 +31,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-      return queryInterface.bulkDelete('Transactions', null, {});
+      return queryInterface.bulkDelete('transactions', null, {});
   }
 };

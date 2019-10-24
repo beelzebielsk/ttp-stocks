@@ -17,11 +17,6 @@ app.use((req, res, next) => {
 app.use(allowCors);
 app.use('/api', api_router);
 
-app.use(express.static(path.join(__dirname, 'build')));
-app.get('/*', async (req, res) => {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
-
 models.sequelize.sync({force: false})
     .then(() => {
         app.listen(PORT, () => {

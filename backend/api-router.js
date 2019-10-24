@@ -87,14 +87,15 @@ router.param('userId', (req, res, next, id) => {
 //generate a private/public key pair and make api endpoint to get the
 //public key.
 const secret = 'secret';
-const verifyCredentials = verifyJWTToken(secret);
+//const verifyCredentials = verifyJWTToken(secret);
+const verifyCredentials = (req, res, next) => { next(); }
 
 router.post('/login', validateJSONFields(['email', 'password']));
 router.post('/login', async (req, res) => {
     console.log('req.body', req.body);
     const {email, password} = req.body;
 
-    const user = await models.User.findOne({
+    const user = await models.user.findOne({
         where: {email}
     });
     if (user === null) {
@@ -124,7 +125,7 @@ router.post('/user', async (req, res) => {
     const {email, password, firstName, lastName} = req.body;
     try {
         const hash = await bcrypt.hash(password, 10);
-        const dbResult = await models.User.create({
+        const dbResult = await models.user.create({
             email, password: hash, firstName, lastName
         });
         console.log(dbResult);
@@ -139,7 +140,7 @@ router.post('/user', async (req, res) => {
 });
 
 router.get('/user/:userId', verifyCredentials, async (req, res) => {
-    const dbResult = await models.User.findByPk(req.userId);
+    const dbResult = await models.user.findByPk(req.userId);
     if (dbResult === null) {
         res.status(404).end;
     }
@@ -164,7 +165,7 @@ router.post('/transaction', verifyCredentials, async (req, res) => {
     console.log('user id:', userId);
     const transaction = await models.sequelize.transaction();
     try {
-        const user = await models.User.findByPk(userId);
+        const user = await models.user.findByPk(userId);
         if (user.balance < price) {
             res.status(403).send("Not enough money for transaction.");
             return;
@@ -172,22 +173,18 @@ router.post('/transaction', verifyCredentials, async (req, res) => {
         await user.update(
             {balance: user.balance - price},
             {fields: ['balance'], transaction});
-        // NOTE: Must capitalize UserId attribute to set it normally.
-        // It is not clear why.
         const record = {
-            tickerName, numStocks, price, UserId: userId
+            tickerName, numStocks, price, userId
         };
-        //console.log('record to enter:', record);
-        await models.Transaction.create(record, {transaction});
-        const stockBalance = await models.OwnedStock.findOne({
+        console.log('record to enter:', record);
+        await models.transaction.create(record, {transaction});
+        const stockBalance = await models.ownedStock.findOne({
             where: {tickerName, userId}
         });
         //console.log('stock balance', stockBalance);
         if (stockBalance === null) {
-            // NOTE: Why did I have to capitalize the first U in userId
-            // here to make this work?
-            await models.OwnedStock.create({
-                tickerName, numStocks, UserId: userId
+            await models.ownedStock.create({
+                tickerName, numStocks, userId
             }, {transaction});
         } else {
             await stockBalance.update(
@@ -206,7 +203,7 @@ router.post('/transaction', verifyCredentials, async (req, res) => {
 //FIXME: This should only be available to the authenticated user with
 //the given id.
 router.get('/transaction/:userId', verifyCredentials, async (req, res) => {
-    const transactions = await models.Transaction.findAll({
+    const transactions = await models.transaction.findAll({
         where: {userId: req.userId},
     });
     res.json(transactions);
@@ -215,7 +212,7 @@ router.get('/transaction/:userId', verifyCredentials, async (req, res) => {
 //FIXME: This should only be available to the authenticated user with
 //the given id.
 router.get('/stocks/:userId', verifyCredentials, async (req, res) => {
-    const transactions = await models.OwnedStock.findAll({
+    const transactions = await models.ownedStock.findAll({
         where: {userId: req.userId},
     });
     res.json(transactions);

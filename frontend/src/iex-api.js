@@ -1,5 +1,5 @@
 // FIXME: Make this work in production.
-export const IEX_KEY = process.env.REACT_APP_API_KEY;
+export const IEX_KEY = process.env.REACT_APP_IEX_API_KEY;
 export const IEX_URL = process.env.REACT_APP_IEX_API_URL;
 console.log("IEX API KEY:", IEX_KEY);
 console.log("IEX API URL:", IEX_URL);

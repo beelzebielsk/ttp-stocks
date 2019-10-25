@@ -87,8 +87,8 @@ router.param('userId', (req, res, next, id) => {
 //generate a private/public key pair and make api endpoint to get the
 //public key.
 const secret = 'secret';
-//const verifyCredentials = verifyJWTToken(secret);
-const verifyCredentials = (req, res, next) => { next(); }
+const verifyCredentials = verifyJWTToken(secret);
+//const verifyCredentials = (req, res, next) => { next(); }
 
 router.post('/login', validateJSONFields(['email', 'password']));
 router.post('/login', async (req, res) => {

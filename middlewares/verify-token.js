@@ -1,12 +1,6 @@
 'use strict';
 const jwt = require('jsonwebtoken');
 
-/**
- * Middleware to guarantee that an Authorization header is present on
- * request, contains a token, and that token was signed with this
- * server's secret key.
- *
- */
 module.exports = function verifyJWTToken(secretOrPublicKey) {
     return (req, res, next) => {
         console.log("verifying jwt token");

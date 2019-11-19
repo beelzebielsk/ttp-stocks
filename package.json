@@ -10,8 +10,8 @@
     "start": "node app.js",
     "build": "cd frontend && npm install && npm run build",
     "devStart": "nodemon -L app.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "startProduction" : "NODE_ENV='production' node app.js"
+    "test": "jest",
+    "startProduction": "NODE_ENV='production' node app.js"
   },
   "repository": {
     "type": "git",
@@ -42,6 +42,8 @@
   },
   "devDependencies": {
     "dotenv": "^8.2.0",
-    "nodemon": "^1.19.3"
+    "jest": "^24.9.0",
+    "nodemon": "^1.19.3",
+    "supertest": "^4.0.2"
   }
 }

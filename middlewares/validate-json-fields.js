@@ -9,23 +9,36 @@
  */
 module.exports = function validateJSONFields(fields) {
     return (req, res, next) => {
-        if (req.header('content-type') !== 'application/json') {
+        if (!isJSONRequest(req)) {
             next();
             return;
         }
-        console.log('json validator:', req.body);
-        let missingFields = [];
-        for (let field of fields) {
-            if (req.body[field] === undefined) {
-                missingFields.push(field);
-            }
-        }
+        const missingFields = getMissingFields(req.body, fields);
         if (missingFields.length > 0) {
-            console.log('found missing fields');
-            res.status(400).send("Missing JSON fields in request: " +
-                missingFields.join(", "));
+            handleMissingFields(res, missingFields);
             return;
-        }
+        }  
         next();
     };
+}
+
+function isJSONRequest(req) {
+    return req.header('content-type') === 'application/json';
+}
+
+function getMissingFields(requestBody, fields) {
+    let missingFields = [];
+    for (let field of fields) {
+        console.log(`Checking for ${field}`);
+        if (requestBody[field] === undefined) {
+            missingFields.push(field);
+        }
+    }
+    return missingFields;
+}
+
+function handleMissingFields(res, missingFields) {
+    let errMsg = "Missing JSON fields in request: " + 
+        missingFields.join(", ");
+    res.status(400).send(errMsg);
 }

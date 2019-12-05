@@ -10,7 +10,7 @@
     "start": "node app.js",
     "build": "cd frontend && npm install && npm run build",
     "devStart": "nodemon -L app.js",
-    "test": "jest",
+    "test": "sequelize db:seed:undo:all && sequelize db:seed:all && jest",
     "startProduction": "NODE_ENV='production' node app.js"
   },
   "repository": {

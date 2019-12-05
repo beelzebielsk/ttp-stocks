@@ -10,7 +10,7 @@
 module.exports = function validateJSONFields(fields) {
     return (req, res, next) => {
         if (!isJSONRequest(req)) {
-            next();
+            handleNonJSONRequest(res);
             return;
         }
         const missingFields = getMissingFields(req.body, fields);
@@ -41,4 +41,8 @@ function handleMissingFields(res, missingFields) {
     let errMsg = "Missing JSON fields in request: " + 
         missingFields.join(", ");
     res.status(400).send(errMsg);
+}
+
+function handleNonJSONRequest(res) {
+    res.status(400).send("Request must be application/json!");
 }

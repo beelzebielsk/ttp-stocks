@@ -2,7 +2,7 @@
 const request = require('supertest');
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const verifyJWTToken = require('./middlewares/verify-token');
+const verifyJWTToken = require('../middlewares/verify-token');
 
 const secret = 'secret';
 const verifyCredentials = verifyJWTToken(secret);

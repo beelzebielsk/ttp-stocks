@@ -5,7 +5,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 
-const validateJSONFields = require('./middlewares/validate-json-fields');
+const validateJSONFields = require('../middlewares/validate-json-fields');
 
 
 function makeAppWithJSONValidator(fields) {
@@ -17,11 +17,11 @@ function makeAppWithJSONValidator(fields) {
         }));
 }
 
-test('request whose type is not application/json returns 200', () => {
+test('request whose type is not application/json returns 400', () => {
     const app = makeAppWithJSONValidator(['fieldOne']);
     return request(app)
         .get('/')
-        .expect(200);
+        .expect(400);
 });
 
 test('request with a missing field returns 400', () => {
